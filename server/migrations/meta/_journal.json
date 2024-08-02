@@ -15,6 +15,13 @@
       "when": 1722343451660,
       "tag": "0001_woozy_roland_deschain",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1722613818992,
+      "tag": "0002_short_sharon_ventura",
+      "breakpoints": true
     }
   ]
 }
