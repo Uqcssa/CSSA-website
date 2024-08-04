@@ -20,12 +20,16 @@ export default async function Nav(){
                     {!session ? (
                         <li>
                             
-                            <Button asChild>
-                                <Link href={"/auth/login"}>
-                                    <LogIn/>
-                                    <span>Login</span>
-                                </Link>
-                            </Button>
+                            <button className="p-[3px] relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg" />
+                                <div className="px-3 py-2  bg-slate-300 rounded-[6px]  relative group transition duration-200 text-black hover:bg-transparent">
+                                    <Link className="flex gap-2" href={"/auth/login"}>
+                                        <LogIn className="my-1" size={16} />
+                                        <span>Login</span>
+                                    </Link>
+                                </div>
+                            </button>
+                            
 
                         </li>
                     ) : (<li>
