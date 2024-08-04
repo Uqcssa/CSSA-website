@@ -35,7 +35,7 @@ export const AuthCard =({
                 </CardFooter>
             }
             <CardFooter>
-                <BackButton href={backButtonHref} label={backButtonLabel}/>
+                <BackButton href={backButtonHref} label={backButtonLabel}></BackButton>
             </CardFooter>
         </Card>
     )

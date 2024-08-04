@@ -6,8 +6,9 @@ export const LoginForm = () =>{
     return(
         <AuthCard 
             cardTitle="Welcome Back!" 
+            backButtonLabel= "Create a new account" 
             backButtonHref="/auth/register" 
-            backButtonLabel="Create a new account" 
+            
             showSocials
         >
 

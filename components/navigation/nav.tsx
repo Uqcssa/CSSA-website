@@ -13,10 +13,10 @@ export default async function Nav(){
     
     
     return(
-        <header className=" bg-slate-500  py-12">
+        <header className=" bg-slate-500  py-8">
             <nav>
-                <ul className="flex justify-between">
-                    <li> Logo</li>
+                <ul className="flex justify-between items-center mx-3 px-2">
+                    <li className="text-white text-3xl">UQCSSA</li>
                     {!session ? (
                         <li>
                             
