@@ -1,12 +1,14 @@
-import { Card } from "@/components/ui/card"
-import { CardHeader } from "@chakra-ui/react"
+import { Card, CardContent, CardTitle } from "@/components/ui/card"
+import { CardFooter, CardHeader } from "@/components/ui/card"
+import Socials from "./socials"
+import { BackButton } from "./backButton"
 
 type CardWrapperProps ={
-    children: React.ReactNode
+    children?: React.ReactNode;
     cardTitle:string
     backButtonHref:string
     backButtonLabel:string
-    showSocials?:string
+    showSocials?:boolean
 }
 
 
@@ -17,9 +19,25 @@ export const AuthCard =({
     backButtonLabel,
     showSocials,
 } : CardWrapperProps) => {
-    <Card>
-        <CardHeader>
-            
-        </CardHeader>
-    </Card>
+    return(
+        <Card>
+            <CardHeader>
+                <CardTitle>
+                    {cardTitle}
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                {children}
+            </CardContent>
+            {showSocials && 
+                <CardFooter>
+                    <Socials/>
+                </CardFooter>
+            }
+            <CardFooter>
+                <BackButton href={backButtonHref} label={backButtonLabel}/>
+            </CardFooter>
+        </Card>
+    )
+    
 }
