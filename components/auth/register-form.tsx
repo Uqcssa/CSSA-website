@@ -17,6 +17,7 @@ import Link from "next/link"
 import {useAction} from 'next-safe-action/hooks'
 import { cn } from "@/lib/utils"
 import { useState } from "react"
+import { emailRegister } from "@/server/actions/email-register"
 
 export const RegisterForm = () =>{
     const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -29,11 +30,18 @@ export const RegisterForm = () =>{
     })
 
     const [error, setError] = useState("")
-   
+    const {execute,status}  = useAction(emailRegister,{
+        onSuccess(data){
+            if(data.success){
+                console.log(data.success)
+            }
+        }
+    })
 
     
     const onSubmit = (values: z.infer<typeof RegisterSchema>) =>{
-        //execute(values);
+        console.log("before server action runs")
+        execute(values);
     }
     return(
         <AuthCard 
