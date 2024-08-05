@@ -16,7 +16,11 @@ export default async function Nav(){
         <header className=" bg-slate-500  py-8">
             <nav>
                 <ul className="flex justify-between items-center mx-3 px-2">
-                    <li className="text-white text-3xl">UQCSSA</li>
+                    <li className="text-white text-3xl">
+                        <Link href={"/"}>
+                            UQCSSA
+                        </Link>
+                    </li>
                     {!session ? (
                         <li>
                             
