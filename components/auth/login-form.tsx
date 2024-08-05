@@ -17,6 +17,7 @@ import Link from "next/link"
 import {useAction} from 'next-safe-action/hooks'
 import { emailSignIn } from "@/server/actions/email-signin"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
 
 export const LoginForm = () =>{
     const form = useForm({
@@ -27,7 +28,14 @@ export const LoginForm = () =>{
         },
     })
 
-    const {execute, status,result} = useAction(emailSignIn,{})
+    const [error, setError] = useState("")
+    const {execute, status} = useAction(emailSignIn,{
+        onSuccess(data){
+            console.log(data)
+        }
+    })
+
+    
     const onSubmit = (values: z.infer<typeof LoginSchema>) =>{
         execute(values);
     }
@@ -58,7 +66,7 @@ export const LoginForm = () =>{
                                         />
                                     </FormControl>
                                     <FormDescription />
-                                    <FormMessage />
+                                    <FormMessage className="text-red-600" />
                                 </FormItem>
                             )}
                             />
@@ -77,7 +85,7 @@ export const LoginForm = () =>{
                                         />
                                     </FormControl>
                                     <FormDescription />
-                                    <FormMessage />
+                                    <FormMessage  className="text-red-600"/>
                                 </FormItem>
                             )}
                             />
