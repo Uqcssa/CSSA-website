@@ -13,7 +13,7 @@ export default async function Nav(){
     
     
     return(
-        <header className=" bg-slate-500  py-8">
+        <header className=" bg-gradient-to-t  py-8">
             <nav>
                 <ul className="flex justify-between items-center mx-3 px-2">
                     <li className="text-white text-3xl">

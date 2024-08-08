@@ -1,9 +1,17 @@
+import About from "@/components/Home/About";
+import ImagesSliderDemo from "../components/static/slider"
+import StickyScrollRevealDemo from "@/components/Home/stickyScroll";
+import Classes from "@/components/Home/Classes";
+import Team from "@/components/Home/Team";
 export default async function Home() {
   
     return (
       <main>
-        
-        {Date.now()}
+        <ImagesSliderDemo/>
+        <About/>
+        <Classes/>
+        <Team/>
+        <StickyScrollRevealDemo/>  
       </main>
     );
 }
