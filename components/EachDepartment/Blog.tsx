@@ -34,51 +34,13 @@ const blogData = [
     title: 'Maintain a perfect structure after workout',
     href: '',
   },
-  {
-    img: '/assets/img/blog/post4.jpg',
-    date: 'March 10, 2024',
-    title: 'Maintain a perfect structure after workout',
-    href: '',
-  },
-  {
-    img: '/assets/img/blog/post1.jpg',
-    date: 'March 10, 2024',
-    title: 'Maintain a perfect structure after workout',
-    href: '',
-  },
-  {
-    img: '/assets/img/blog/post2.jpg',
-    date: 'March 10, 2024',
-    title: 'Maintain a perfect structure after workout',
-    href: '',
-  },
-  {
-    img: '/assets/img/blog/post3.jpg',
-    date: 'March 10, 2024',
-    title: 'Maintain a perfect structure after workout',
-    href: '',
-  },
-  {
-    img: '/assets/img/blog/post4.jpg',
-    date: 'March 10, 2024',
-    title: 'Maintain a perfect structure after workout',
-    href: '',
-  },
+  
 ];
 
 const Blog = () => {
   return (
-    <section className='bg-primary-300 text-white py-24' id='blog'>
+    <section className='bg-primary-300 text-white mt-24' id='blog'>
       <div className='container mx-auto'>
-        <motion.h2
-          variants={fadeIn('up', 0.4)}
-          initial='hidden'
-          whileInView={'show'}
-          viewport={{ once: false, amount: 0.2 }}
-          className='h2 text-center mb-8'
-        >
-          Blogs
-        </motion.h2>
         <motion.div
           variants={fadeIn('up', 0.6)}
           initial='hidden'
@@ -100,7 +62,7 @@ const Blog = () => {
                 slidesPerView: 4,
               },
             }}
-            className='h-[600px] md:max-w-[660px] lg:max-w-none mb-8'
+            className='h-[420px] md:max-w-[660px] lg:max-w-none mb-8'
           >
             {blogData.map((post, index) => {
               return (
@@ -117,12 +79,8 @@ const Blog = () => {
                       <p className='max-w-[380px] uppercase text-[12px] tracking-[3px] mb-1'>
                         {post.date}
                       </p>
-                      <Link
-                        className='hover:text-accent transition-all duration-300'
-                        href={post.href}
-                      >
-                        <h5 className='h5'>{post.title}</h5>
-                      </Link>
+
+                        <h5 >{post.title}</h5> 
                     </div>
                   </div>
                 </SwiperSlide>

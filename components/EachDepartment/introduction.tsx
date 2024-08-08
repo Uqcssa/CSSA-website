@@ -8,26 +8,31 @@ import Blog from "./Blog";
 
 export const IntroductionDepartment = ({
     text,
+    Description,
   }: {
     text: string;
-    
+    Description: string;
   }) =>{
     return(
-        <div className="mt-6">
-            <HighlightText text={`${text}`}/>
-            <Blog/>
+        <div className="mt-10">
+            <HighlightText text={`${text}`} Description ={`${Description}`}/>
+            
+            
         </div>
     )
 }
 type HighlightTextProps = {
     text: string;
+    Description: string;
   };
   
-  const HighlightText: React.FC<HighlightTextProps> = ({ text }) => {
+  const HighlightText: React.FC<HighlightTextProps> = ({ text, Description }) => {
     return (
-      <div className="flex justify-start items-center">
-        
-        <h1 className="text-4xl font-bold text-black">{text}</h1>
+      <div className="flex-col my-9  items-center"> 
+        <h1 className="text-4xl font-bold text-black text-center">{text}</h1>
+        <div className="mt-6">
+          <p className="text-2xl">{Description}</p>
+        </div>
       </div>
     );
   };
