@@ -41,7 +41,7 @@ export default async function Members() {
           <div className='flex justify-center items-center gap-2'>
             {memberData.map((post, index) => {
                     return (
-                        <div className='flex sm:flex-col justify-start h-full max-w-[320px] mx-auto'>
+                        <div key={index} className='flex sm:flex-col justify-start h-full max-w-[320px] mx-auto'>
                           <Image
                             src={post.img}
                             width={320}
