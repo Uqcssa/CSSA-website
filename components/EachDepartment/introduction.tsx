@@ -1,10 +1,9 @@
 "use client";
 import React from "react";
-import { Boxes } from "../ui/background-boxes";
+
 import { cn } from "@/lib/utils";
 import { PiLineVerticalBold } from "react-icons/pi";
-import Image from "next/image";
-import Blog from "./Blog";
+
 
 export const IntroductionDepartment = ({
     text,

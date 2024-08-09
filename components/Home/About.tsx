@@ -1,8 +1,6 @@
 'use client';
 
-import { FaUsers } from 'react-icons/fa';
-import { IoIosPricetags } from 'react-icons/io';
-import { FaDumbbell } from 'react-icons/fa6';
+
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/lib/variants';

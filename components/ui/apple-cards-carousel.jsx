@@ -36,6 +36,9 @@ export const Carousel = ({
       checkScrollability();
     }
   }, [initialScroll]);
+  useEffect(() => {
+    handleClose();
+  }, [handleClose]);
 
   const checkScrollability = () => {
     if (carouselRef.current) {
