@@ -3,7 +3,7 @@ import ImagesSliderDemo from "../components/static/slider"
 import StickyScrollRevealDemo from "@/components/Home/stickyScroll";
 import Classes from "@/components/Home/Classes";
 import Team from "@/components/Home/Team";
-import { AppleCardsCarouselDemo } from "@/components/Home/AppleCards";
+import { EventsSlider } from "@/components/Home/eventsSlider";
 export default async function Home() {
   
     return (
@@ -12,8 +12,8 @@ export default async function Home() {
         <About/>
         <Classes/>
         <Team/>
-        
-        <StickyScrollRevealDemo/>  
+        <EventsSlider/>
+        {/* <StickyScrollRevealDemo/>   */}
       </main>
     );
 }

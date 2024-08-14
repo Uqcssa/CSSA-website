@@ -29,13 +29,15 @@ export const LoginForm = () =>{
     })
 
     const [error, setError] = useState("")
+    // the email function for showing success message if user register successfully!
+    // useAction hooks 会返回一个对象，这个对象里会包含 excute方法，status状态以及RESULT结果。
     const {execute, status} = useAction(emailSignIn,{
         onSuccess(data){
             console.log(data)
         }
     })
 
-    
+    // 使用onSumbit处理由用户输入的values，excute这些values,它将用户输入的表单值传递给 emailSignIn 方法，完成登录操作。
     const onSubmit = (values: z.infer<typeof LoginSchema>) =>{
         execute(values);
     }

@@ -19,6 +19,19 @@ module.exports = {
         "gradient-to-t": "linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%)",
         "media-photo":"/assets/uq/T3.jpg"
       },
+      animation: {
+        aurora: "aurora 60s linear infinite",
+      },
+      keyframes: {
+        aurora: {
+          from: {
+            backgroundPosition: "50% 50%, 50% 50%",
+          },
+          to: {
+            backgroundPosition: "350% 50%, 350% 50%",
+          },
+        },
+      },
     },
   },
   plugins: [// rest of the code

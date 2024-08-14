@@ -10,19 +10,19 @@ import DrawerButton from '@/components/EachDepartment/DrawerButton';
 
 const memberData = [
   {
-    img: "/assets/部门成员/祝梓若.jpg",
+    img: "/assets/部门成员/传媒部/祝梓若6.jpg",
     date: 'March 10, 2024',
     title: 'Maintain a perfect structure after workout',
     href: '',
   },
   {
-    img: '/assets/部门成员/吉羽翔.jpg',
+    img: '/assets/部门成员/传媒部/吉宇翔.jpg',
     date: 'March 10, 2024',
     title: 'Maintain a perfect structure after workout',
     href: '',
   },
   {
-    img: '/assets/部门成员/张雪琦.jpg',
+    img: '/assets/部门成员/传媒部/张雪琦.jpg',
     date: 'March 10, 2024',
     title: 'Maintain a perfect structure after workout',
     href: '',
@@ -38,7 +38,7 @@ export default async function Members() {
        Description='我们是UQCSSA的形象护卫者！无论是大到UQCSSA各个活动的宣传和记录，还是小到为同学种草好吃不贵的高性价比店铺，都是传媒的业务内容。'/>
         <div className='flex-col mt-20'>
           <p className='text-center text-4xl font-bold my-16'>部员介绍</p>
-          <div className='flex justify-center items-center gap-2'>
+          <div className='flex justify-center items-center gap-4'>
             {memberData.map((post, index) => {
                     return (
                         <div key={index} className='flex sm:flex-col justify-start h-full max-w-[320px] mx-auto'>

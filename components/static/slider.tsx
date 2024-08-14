@@ -10,7 +10,7 @@ export function ImagesSliderDemo() {
     "/assets/uq/T3.jpg"
   ];
   return (
-    <ImagesSlider className="h-[52rem] w-full" overlayClassName images={images}>
+    <ImagesSlider className="h-[60rem] w-full" overlayClassName images={images}>
       <motion.div
         initial={{
           opacity: 0,

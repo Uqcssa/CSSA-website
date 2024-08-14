@@ -11,19 +11,19 @@ import DrawerButton from '@/components/EachDepartment/DrawerButton';
 const memberData = [
   {
     img: "/assets/部门成员/外联部/mi笑.jpg",
-    date: 'March 10, 2024',
+    date: '外联部副部长',
     title: 'Maintain a perfect structure after workout',
     href: '',
   },
   {
-    img: '/assets/部门成员/传媒部/祝梓若.jpg',
-    date: 'March 10, 2024',
+    img: '/assets/部门成员/外联部/Gracee.jpg',
+    date: '外联部部长',
     title: 'Maintain a perfect structure after workout',
     href: '',
   },
   {
-    img: '/assets/部门成员/传媒部/吉羽翔.jpg',
-    date: 'March 10, 2024',
+    img: '/assets/部门成员/外联部/nobody.jpg',
+    date: '外联部副部长',
     title: 'Maintain a perfect structure after workout',
     href: '',
   },
@@ -50,7 +50,7 @@ export default async function Marketing() {
                             className='mb-6 shadow-md rounded-md'
                           />
                           <div className='flex flex-col items-start'>
-                            <p className='max-w-[380px] uppercase text-[12px] tracking-[3px] mb-1'>
+                            <p className='max-w-[380px] uppercase text-2xl tracking-[3px] mb-1'>
                               {post.date}
                             </p>
 
