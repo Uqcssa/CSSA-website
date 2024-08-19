@@ -18,6 +18,8 @@ import {useAction} from 'next-safe-action/hooks'
 import { emailSignIn } from "@/server/actions/email-signin"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
+import { FormError } from "./form-error"
+import { FormSuccess } from "./form-success"
 
 export const LoginForm = () =>{
     const form = useForm({
@@ -29,10 +31,13 @@ export const LoginForm = () =>{
     })
 
     const [error, setError] = useState("")
+    const [success, setSuccess] = useState("")
     // the email function for showing success message if user register successfully!
     // useAction hooks 会返回一个对象，这个对象里会包含 excute方法，status状态以及RESULT结果。
     const {execute, status} = useAction(emailSignIn,{
         onSuccess(data){
+            if(data?.error) setError(data.error)
+            if(data?.success) setSuccess(data.success)
             console.log(data)
         }
     })
@@ -91,6 +96,8 @@ export const LoginForm = () =>{
                                 </FormItem>
                             )}
                             />
+                            <FormSuccess message={success}/>
+                            <FormError message={error}/>
                             <Button className="text-purple-500" size={"sm"} variant={"link"} asChild>
                                 <Link href={"/auth/reset"}>
                                     Forgot your password
