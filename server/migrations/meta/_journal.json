@@ -64,6 +64,13 @@
       "when": 1722877675052,
       "tag": "0008_stormy_harpoon",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1724077437588,
+      "tag": "0009_solid_micromax",
+      "breakpoints": true
     }
   ]
 }
