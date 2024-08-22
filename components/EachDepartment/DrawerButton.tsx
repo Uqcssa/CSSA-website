@@ -12,6 +12,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import Link from "next/link"
+import Image from "next/image"
 
 const data = [
   {
@@ -101,8 +102,18 @@ export function DrawerButton() {
             </div>
           </div>
           <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline" className="mb-3 text-white border-none text-3xl hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200">取消</Button>
+            <DrawerClose asChild className="-mt-14 ">
+            <div className="flex items-center justify-center">
+              <Image
+                            src="/assets/uqcssa_logo/logo.jpg"
+                            width={80}
+                            height={142}
+                            alt=''
+                            className='mb-6 '
+            />
+            </div>
+            
+              {/* <Button variant="outline" className="mb-3 text-white border-none text-3xl hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200">取消</Button> */}
             </DrawerClose>
           </DrawerFooter>
         </div>

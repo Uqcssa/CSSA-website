@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "..";
 import { emailTokens, passwordResetTokens, users } from "../schema";
+import { date } from "drizzle-orm/pg-core";
 
 export const getVerificationTokenByEmail = async (email: string) => {
   try {
@@ -22,6 +23,7 @@ export const generateEmailVerificationToken = async (email: string) => {
 
   const existingToken = await getVerificationTokenByEmail(email)
 
+  //如果已经存在Token则删除这个token
   if (existingToken) {
     await db.delete(emailTokens).where(eq(emailTokens.id, existingToken.id))
   }
@@ -68,3 +70,42 @@ export const getPasswordResetTokenByToken = async (token: string) =>{
   }
 }
 
+//这个函数用来检查在passwordRestToken数据表里是否存在对应的token根据email来查找
+export const getPasswordResetTokenByEmail = async (email: string) =>{
+  try {
+    const resetToken = await db.query.passwordResetTokens.findFirst({
+      where: eq(passwordResetTokens.email, email)
+    })
+    return resetToken
+  } catch (error) {
+    return null
+  }
+}
+
+//修改密码时生成新的resettoken并发送
+export const generatePasswordResetToken = async(email: string) =>{
+  try {
+    const token = crypto.randomUUID()
+    //按小时过期
+    const expires = new Date(new Date().getTime() + 3600 * 1000)
+
+    const existingToken = await getPasswordResetTokenByEmail(email)
+
+    //如果已经存在Token则删除这个token
+    if(existingToken){
+      await db.delete(passwordResetTokens).where(eq(passwordResetTokens.id, existingToken.id))
+    }
+    
+    const passwordResetToken = await db
+    .insert(passwordResetTokens)
+    .values({
+      email,
+      token,
+      expires,
+    })
+    .returning()//很重要
+    return passwordResetToken //这里还要多返回一个tokens
+  } catch (error) {
+    return  null
+  }
+}

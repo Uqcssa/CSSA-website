@@ -22,8 +22,11 @@ import { FormError } from "./form-error"
 import { FormSuccess } from "./form-success"
 import { NewPasswordSchema } from "@/types/new-password-schema"
 import { newPassword } from "@/server/actions/new-password"
+import { useSearchParams } from "next/navigation"
 
 export const NewPasswordForm = () =>{
+    //useSearchParams().get("token")很重要,帮助你从url中获取生成的token.
+    const token = useSearchParams().get("token")
     const form = useForm<z.infer<typeof NewPasswordSchema>>({
         resolver: zodResolver(NewPasswordSchema),
         defaultValues: {
@@ -45,7 +48,7 @@ export const NewPasswordForm = () =>{
 
     // 使用onSumbit处理由用户输入的values，excute这些values,它将用户输入的表单值传递给 newpassword-form 方法，完成重设密码操作。
     const onSubmit = (values: z.infer<typeof NewPasswordSchema>) =>{
-        execute(values);
+        execute({password:values.password, token});
     }
     return(
         <AuthCard 
@@ -71,6 +74,7 @@ export const NewPasswordForm = () =>{
                                             placeholder="Your Password"
                                             type="password"
                                             autoComplete="current-password"
+                                            disabled={status === "executing"}
                                         />
                                     </FormControl>
                                     <FormDescription />
@@ -81,7 +85,7 @@ export const NewPasswordForm = () =>{
                             <FormSuccess message={success}/>
                             <FormError message={error}/>
                             <Button className="text-purple-500" size={"sm"} variant={"link"} asChild>
-                                <Link href={"/auth/reset"}>
+                                <Link href={"/auth/resets"}>
                                     Forgot your password
                                 </Link>
                             </Button>
