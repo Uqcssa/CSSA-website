@@ -3,22 +3,30 @@ import { UserButton } from "./user-button"
 
 import Link from "next/link"
 import {LogIn} from "lucide-react"
+import Image from "next/image"
 
 
 
 
 
 export default async function Nav(){
+    //来自sever auth ,通过session 来访问auth以及user的头像和信息
     const session = await auth()
     
     
     return(
-        <header className=" bg-gradient-to-t  py-8">
+        <header className=" bg-gradient-to-t  py-9">
             <nav>
                 <ul className="flex justify-between items-center mx-3 px-2">
                     <li className="text-white text-3xl">
-                        <Link href={"/"}>
-                            UQCSSA
+                        <Link href={"/"} aria-label="Uqcssa Logo">
+                            <Image
+                                src= "/assets/uqcssa_logo/cssaLogo.jpg"
+                                width={420}
+                                height={766}
+                                alt=''
+                                className=''
+                            />
                         </Link>
                     </li>
                     {!session ? (
