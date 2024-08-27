@@ -14,9 +14,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Image from "next/image"
 import { Suspense } from "react"
 import { LogOut, Moon, Settings, Sun, Truck } from "lucide-react"
-
+import { useRouter } from "next/navigation"
 
 export const UserButton =({user}: Session) => {
+    const router = useRouter()
     return(
     <DropdownMenu modal={false}>
     <DropdownMenuTrigger>
@@ -58,7 +59,9 @@ export const UserButton =({user}: Session) => {
             <Truck size={15} className=" mr-3 group-hover:translate-x-1 transition-all duration-300 ease-in-out"/>
             My Orders
         </DropdownMenuItem>
-        <DropdownMenuItem className="group focus:bg-slate-50 py-2 font-medium cursor-pointer transition-all duration-500">
+        <DropdownMenuItem 
+        onClick={() => router.push("/dashboard/settings")}
+        className="group focus:bg-slate-50 py-2 font-medium cursor-pointer transition-all duration-500">
             <Settings size={15} className="mr-3 group-hover:rotate-180 transition-all duration-300 ease-in-out" />
             Settings
         </DropdownMenuItem>
