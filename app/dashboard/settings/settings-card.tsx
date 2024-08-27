@@ -63,7 +63,7 @@ export default function SettingsCard(session: SettingsForm){
         <Card className="mx-9 my-4">
             <CardHeader>
                 <CardTitle>Your Settings</CardTitle>
-                <CardDescription>Update your account settings</CardDescription>
+                <CardDescription className="text-gray-500 py-1">Update your account settings</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -170,7 +170,7 @@ export default function SettingsCard(session: SettingsForm){
                         render={({ field }) => (
                             <FormItem>
                             <FormLabel>Two Factor Authentication</FormLabel>
-                            <FormDescription className="text-slate-600">
+                            <FormDescription className="text-gray-500">
                                 Enable two factor authentication for your account
                             </FormDescription>
                             <FormControl>
