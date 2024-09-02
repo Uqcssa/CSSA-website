@@ -39,6 +39,7 @@ export default function SettingsCard(session: SettingsForm){
     //设置error和success的状态
     const [error, setError] = useState<string | undefined>()
     const [success, setSuccess] = useState<string | undefined>()
+    const [isOAuth, setIsOAuth] = useState<boolean>(false); // 存储 OAuth 状态
     //设置判断avatar是否完成上传
     const [avatarUploading, setAvatarUploading] = useState(false)
     console.log(session.session.user)
@@ -46,9 +47,9 @@ export default function SettingsCard(session: SettingsForm){
     const form = useForm<z.infer<typeof SettingsSchema>>({
         resolver: zodResolver(SettingsSchema),
         defaultValues:{
-            password: undefined,
-            newPassword: undefined,
-            confirmYourPassword: undefined,
+            password: isOAuth ? undefined : "",
+            newPassword: isOAuth ? undefined : "",
+            confirmYourPassword: isOAuth ? undefined : "",
             name: session.session.user?.name || undefined,
             email: session.session.user?.email || undefined,
             image: session.session.user?.image || undefined,
@@ -60,6 +61,7 @@ export default function SettingsCard(session: SettingsForm){
         onSuccess: (data) => {
           if (data?.success) setSuccess(data.success)
           if (data?.error) setError(data.error)
+          setIsOAuth(data.isOAuth!); // 设置 OAuth 状态
         },
         onError: (error) => {
           console.log(error)
@@ -143,7 +145,7 @@ export default function SettingsCard(session: SettingsForm){
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>Current Password</FormLabel>
                             <FormControl>
                                 <Input 
                                     placeholder="******" {...field} 
@@ -207,6 +209,7 @@ export default function SettingsCard(session: SettingsForm){
                             </FormDescription>
                             <FormControl>
                                 <Switch
+                                    size='lg'
                                     disabled={
                                         status === "executing" ||
                                         session.session.user.isOAuth === true

@@ -29,6 +29,7 @@ export const settings = action(SettingsSchema, async(values)=>{
     //check if the user signed in through the google or github
     //we dont need define the email, name , and other informations
    // Handle OAuth users
+   //set the isTwoFactorEnabled as false cuz the isTwoFactorEnabled is boolean type
    if (user.user.isOAuth) {
     values.password = undefined;
     values.newPassword = undefined;
@@ -72,5 +73,5 @@ const updateUser = await db.update(users).set({
 
 // Refresh the dashboard page after updating user information
 revalidatePath('/dashboard/settings');
-return { success: "Settings Updated" };
+return { success: "Settings Updated", isOAuth: user.user.isOAuth };
 });
