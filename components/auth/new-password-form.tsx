@@ -31,6 +31,7 @@ export const NewPasswordForm = () =>{
         resolver: zodResolver(NewPasswordSchema),
         defaultValues: {
             password:"",
+            confirmPassword: "",
         },
     })
 
@@ -48,7 +49,8 @@ export const NewPasswordForm = () =>{
 
     // 使用onSumbit处理由用户输入的values，excute这些values,它将用户输入的表单值传递给 newpassword-form 方法，完成重设密码操作。
     const onSubmit = (values: z.infer<typeof NewPasswordSchema>) =>{
-        execute({password:values.password, token});
+        console.log(values)
+        execute({password:values.password, confirmPassword: values.confirmPassword, token});
     }
     return(
         <AuthCard 
@@ -81,6 +83,26 @@ export const NewPasswordForm = () =>{
                                     <FormMessage  className="text-red-600"/>
                                 </FormItem>
                             )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="confirmPassword"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-2xl">Confirm New Password</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="Confirm New Password"
+                                                type="password"
+                                                autoComplete="new-password"
+                                                disabled={status === "executing"}
+                                            />
+                                        </FormControl>
+                                        <FormDescription />
+                                        <FormMessage className="text-red-600" />
+                                    </FormItem>
+                                )}
                             />
                             <FormSuccess message={success}/>
                             <FormError message={error}/>

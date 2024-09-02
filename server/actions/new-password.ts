@@ -13,7 +13,8 @@ const action = createSafeActionClient()
 
 export const newPassword = action(
     NewPasswordSchema,
-    async ({password, token}) =>{
+    async ({password,confirmPassword, token}) =>{
+        
         const pool = new Pool({ connectionString: process.env.POSTGRES_URL })
         const dbPool = drizzle(pool)
         //To check the Token 
@@ -46,7 +47,11 @@ export const newPassword = action(
             return{error:"User not found"}
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        if(!password === confirmPassword){
+            return{error:"Password doesn't match"}
+        }
+        //很关键这里传入的是confirmPassword, 使用bcrypt来加密confirmPassword而不是password
+        const hashedPassword = await bcrypt.hash(confirmPassword, 10);
         //这里使用数据库事务，tx为事务对象，通过它可以执行各种数据库操作（例如更新、删除）
         //而不用担心这些操作会立即生效，因为事务还没有提交。
         //用于防止密码更新后，删除旧的密码后重置Token失败

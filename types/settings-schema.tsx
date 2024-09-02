@@ -8,11 +8,22 @@ export const SettingsSchema = z.object({
     email: z.optional(z.string().email()),
     password: z.optional(z.string().min(8)),
     newPassword: z.optional(z.string().min(8)),
+    confirmYourPassword: z.optional(z.string().min(8)),
 })
 .refine((data) => {
-    if(data.password && !data.newPassword){
-        return false
+    // Ensure that if the user is changing their password, both newPassword and confirmYourPassword are provided
+    if (data.password && !data.newPassword) {
+        return false;
     }
-    return true
-},{message: "New password is required", path:['newPassword']})
+
+    // Ensure newPassword and confirmYourPassword match
+    if (data.newPassword && data.confirmYourPassword) {
+        return data.newPassword === data.confirmYourPassword;
+    }
+
+    return true; // If there's no new password or confirm password, or if there's no attempt to change password, validation passes.
+}, {
+    message: "Passwords do not match or new password is required",
+    path: ['confirmYourPassword']
+});
 // 用来验证两次输入的密码是否相同

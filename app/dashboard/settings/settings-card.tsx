@@ -9,7 +9,7 @@ import {
   } from "@/components/ui/card"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { object, z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -28,7 +28,8 @@ import { FormError } from "@/components/auth/form-error"
 import { FormSuccess } from "@/components/auth/form-success"
 import { useState } from "react"
 import { Switch } from "@chakra-ui/react"
-
+import { settings } from "@/server/actions/settings"
+import { useAction } from "next-safe-action/hooks"
 
 type SettingsForm = {
     session: Session
@@ -47,10 +48,22 @@ export default function SettingsCard(session: SettingsForm){
         defaultValues:{
             password: undefined,
             newPassword: undefined,
+            confirmYourPassword: undefined,
             name: session.session.user?.name || undefined,
             email: session.session.user?.email || undefined,
             image: session.session.user?.image || undefined,
             // isTwoFactorEnabled: session.session.user?.isTwoFactorEnabled || undefined,
+        },
+    })
+
+    const { execute, status } = useAction(settings, {
+        onSuccess: (data) => {
+          if (data?.success) setSuccess(data.success)
+          if (data?.error) setError(data.error)
+        },
+        onError: (error) => {
+          console.log(error)
+          setError("Something went wrong")
         },
     })
 
@@ -134,7 +147,7 @@ export default function SettingsCard(session: SettingsForm){
                             <FormControl>
                                 <Input 
                                     placeholder="******" {...field} 
-                                    disabled = {status === "executing"}
+                                    disabled = {status === "executing" || session?.session.user.isOAuth}
                                     {...field}
                                 />
                             </FormControl>
@@ -154,7 +167,26 @@ export default function SettingsCard(session: SettingsForm){
                             <FormControl>
                                 <Input 
                                     placeholder="******" {...field} 
-                                    disabled = {status === "executing"}
+                                    disabled = {status === "executing" || session?.session.user.isOAuth}
+                                    {...field}
+                                />
+                            </FormControl>
+                            
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                    {/* 设置confirmYourNewPassword的form */}
+                        <FormField
+                        control={form.control}
+                        name ="confirmYourPassword"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Confirm Your New Password</FormLabel>
+                            <FormControl>
+                                <Input 
+                                    placeholder="******" {...field} 
+                                    disabled = {status === "executing" || session?.session.user.isOAuth}
                                     {...field}
                                 />
                             </FormControl>
@@ -174,7 +206,13 @@ export default function SettingsCard(session: SettingsForm){
                                 Enable two factor authentication for your account
                             </FormDescription>
                             <FormControl>
-                                <Switch/>
+                                <Switch
+                                    disabled={
+                                        status === "executing" ||
+                                        session.session.user.isOAuth === true
+                                      }
+                                      checked={field.value}
+                                />
                             </FormControl>
                             
                             <FormMessage />

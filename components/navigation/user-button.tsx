@@ -65,13 +65,13 @@ export const UserButton =({user}: Session) => {
             <Settings size={15} className="mr-3 group-hover:rotate-180 transition-all duration-300 ease-in-out" />
             Settings
         </DropdownMenuItem>
-        <DropdownMenuItem className="py-2 font-medium cursor-pointer transition-all duration-500">
+        {/* <DropdownMenuItem className="py-2 font-medium cursor-pointer transition-all duration-500">
             <div className="flex items-center">
                 <Sun size={15}/>
                 <Moon size={15}/>
                 Theme
             </div> 
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <DropdownMenuItem 
             onClick={() => signOut()}
             className="group focus:bg-red-100 py-2 font-medium cursor-pointer transition-all duration-500 group-hover:rounded-lg "
