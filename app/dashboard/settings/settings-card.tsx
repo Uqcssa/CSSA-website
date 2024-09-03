@@ -39,6 +39,7 @@ export default function SettingsCard(session: SettingsForm){
     //设置error和success的状态
     const [error, setError] = useState<string | undefined>()
     const [success, setSuccess] = useState<string | undefined>()
+    //check if user login with googleoauth or type password
     const [isOAuth, setIsOAuth] = useState<boolean>(false); // 存储 OAuth 状态
     //设置判断avatar是否完成上传
     const [avatarUploading, setAvatarUploading] = useState(false)
@@ -53,7 +54,7 @@ export default function SettingsCard(session: SettingsForm){
             name: session.session.user?.name || undefined,
             email: session.session.user?.email || undefined,
             image: session.session.user?.image || undefined,
-            // isTwoFactorEnabled: session.session.user?.isTwoFactorEnabled || undefined,
+            isTwoFactorEnabled: session.session.user?.isTwoFactorEnabled || false,
         },
     })
 
@@ -214,7 +215,9 @@ export default function SettingsCard(session: SettingsForm){
                                         status === "executing" ||
                                         session.session.user.isOAuth === true
                                       }
-                                      checked={field.value}
+                                    checked={field.value}            
+                                    isChecked={field.value}  // 这个是点击更新switch状态的关键                    
+                                    onChange={(e) => field.onChange(e.target.checked)}
                                 />
                             </FormControl>
                             

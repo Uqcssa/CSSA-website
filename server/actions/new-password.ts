@@ -23,7 +23,7 @@ export const newPassword = action(
         }
         //检查token是否是valid
         //如果token是vaild的我们则更新密码
-
+        //在这里获得是生成的token时间是生成的时间+2分钟
         const existingToken = await getPasswordResetTokenByToken(token)
 
         //一定要写这个if检查不然如果existingToken为null就没有办法通过typescript的检查

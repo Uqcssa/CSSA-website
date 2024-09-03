@@ -28,6 +28,9 @@ export const emailSignIn = actionClient(LoginSchema, async ({email, password, co
             await sendVerificationEmail(verificationToken[0].email, verificationToken[0].token);
             return { success: 'Confirmation Email Sent!' };
         }  
+
+        //Two factor to do(双因素验证)
+
         await signIn("credentials",{
             email,
             password,

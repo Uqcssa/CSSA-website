@@ -62,6 +62,7 @@ export const settings = action(SettingsSchema, async(values)=>{
     }
 }
 
+
 // Update user information in the database
 //这里要去掉更新email的代码。
 const updateUser = await db.update(users).set({
