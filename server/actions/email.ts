@@ -37,7 +37,7 @@ export const sendTwoFactorTokenByEmail = async(email:string, token: string) =>{
   const { data, error } = await resend.emails.send({
       from: "Acme <onboarding@resend.dev>",
       to: ['uqcssakundaxuelian@gmail.com'],
-      subject: "UQCSSA - Your Two Factor Token",
+      subject: "UQCSSA - Your Confirmation Number",
       html: `<p>Your Confirmation code: ${token}</p>`,
     })
   if (error) return console.log(error)

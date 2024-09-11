@@ -30,6 +30,7 @@ import { useState } from "react"
 import { Switch } from "@chakra-ui/react"
 import { settings } from "@/server/actions/settings"
 import { useAction } from "next-safe-action/hooks"
+import { UploadButton } from "@/app/api/uploadthing/upload"
 
 type SettingsForm = {
     session: Session
@@ -48,9 +49,9 @@ export default function SettingsCard(session: SettingsForm){
     const form = useForm<z.infer<typeof SettingsSchema>>({
         resolver: zodResolver(SettingsSchema),
         defaultValues:{
-            password: isOAuth ? undefined : "",
-            newPassword: isOAuth ? undefined : "",
-            confirmYourPassword: isOAuth ? undefined : "",
+            password:  undefined ,
+            newPassword:undefined ,
+            confirmYourPassword: undefined ,
             name: session.session.user?.name || undefined,
             email: session.session.user?.email || undefined,
             image: session.session.user?.image || undefined,
@@ -76,14 +77,14 @@ export default function SettingsCard(session: SettingsForm){
     }
 
     return(
-        <Card className="mx-9 my-4">
+        <Card className="mx-9 ">
             <CardHeader>
                 <CardTitle>Your Settings</CardTitle>
                 <CardDescription className="text-gray-500 py-1">Update your account settings</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField
                         control={form.control}
                         name="name"
@@ -125,6 +126,39 @@ export default function SettingsCard(session: SettingsForm){
                                         alt="User Image"
                                     />
                                 )}
+                                {/* set the endpoint for avatarUploader from core.ts
+                                    this is for call the upload api 
+                                */}
+                                <UploadButton
+                                    className="ml-3 scale-75 ut-button:bg-blue-500
+                                    hover:ut-button:bg-blue-700/100 
+                                    ut:button:transition ut-button:duration-200 ease-linear
+                                    ut-label:hidden ut-allowed-content:hidden"
+                                    endpoint="avatarUploader"
+                                    onUploadBegin={() =>{
+                                        setAvatarUploading(true)
+                                    }}
+                                    onUploadError={(error) =>{
+                                        form.setError('image',{
+                                            type:'validate',
+                                            message:error.message
+                                        })
+                                        setAvatarUploading(false)
+                                        return
+                                    }}
+                                    onClientUploadComplete={(res) =>{
+                                        form.setValue('image', res[0].url!)
+                                        setAvatarUploading(false)
+                                        return
+                                    }}  
+                                    content={{
+                                        button({isUploading,uploadProgress}){
+                                            if(!isUploading) return <div>Change Avatar</div>
+                                            // Display the upload progress with destructured uploadProgress
+                                            return <div>{uploadProgress.toString()}%</div>;
+                                        },
+                                    }}
+                                />
                             </div>
                             <FormControl>
                                 <Input 
@@ -139,6 +173,7 @@ export default function SettingsCard(session: SettingsForm){
                             </FormItem>
                         )}
                         />
+
                         {/* 设置password的form */}
                    
                         <FormField
@@ -146,16 +181,16 @@ export default function SettingsCard(session: SettingsForm){
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Current Password</FormLabel>
-                            <FormControl>
-                                <Input 
-                                    placeholder="******" {...field} 
-                                    disabled = {status === "executing" || session?.session.user.isOAuth}
-                                    {...field}
-                                />
-                            </FormControl>
-                            
-                            <FormMessage />
+                                <FormLabel>Current Password</FormLabel>
+                                <FormControl>
+                                    <Input 
+                                        placeholder="******" {...field} 
+                                        disabled = {status === "executing" || session?.session.user.isOAuth}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                
+                                <FormMessage />
                             </FormItem>
                         )}
                         />
@@ -204,24 +239,28 @@ export default function SettingsCard(session: SettingsForm){
                         name ="isTwoFactorEnabled"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Two Factor Authentication</FormLabel>
-                            <FormDescription className="text-gray-500">
-                                Enable two factor authentication for your account
-                            </FormDescription>
-                            <FormControl>
-                                <Switch
-                                    size='lg'
-                                    disabled={
-                                        status === "executing" ||
-                                        session.session.user.isOAuth === true
-                                      }
-                                    checked={field.value}            
-                                    isChecked={field.value}  // 这个是点击更新switch状态的关键                    
-                                    onChange={(e) => field.onChange(e.target.checked)}
-                                />
-                            </FormControl>
-                            
-                            <FormMessage />
+                                <div className=" flex justify-between items-center ">
+                                    <div className="flex flex-col gap-2">
+                                        <FormLabel>Two Factor Authentication</FormLabel>
+                                        <FormDescription className="text-gray-500">
+                                            Enable two factor authentication for your account
+                                        </FormDescription>
+                                    </div>
+                                <FormControl>
+                                    <Switch
+                                        size='lg'
+                                        disabled={
+                                            status === "executing" ||
+                                            session.session.user.isOAuth === true
+                                        }
+                                        checked={field.value}            
+                                        isChecked={field.value}  // 这个是点击更新switch状态的关键                    
+                                        onChange={(e) => field.onChange(e.target.checked)}
+                                    />
+                                </FormControl>
+                                </div>
+                                
+                                <FormMessage />
                             </FormItem>
                         )}
                         />
