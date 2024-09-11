@@ -13,7 +13,7 @@ export default function DashboardNav({
   const pathname = usePathname()
   return (
     <nav className="mx-10 my-4 py-3 overflow-auto mb-4">
-      <ul className="flex gap-8 text-sm font-semibold ">
+      <ul className="flex gap-12 text-sm font-semibold ">
         <AnimatePresence>
           {allLinks.map((link) => (
             <motion.li whileTap={{ scale: 0.95 }} key={link.path}>
@@ -24,8 +24,17 @@ export default function DashboardNav({
                 )}
                 href={link.path}
               >
-                {link.icon}
-                {link.label}
+                {/* <div className="hover:scale-125 transition-all duration-300 ease-in-out">
+                  {link.icon}
+                </div>
+                <div className="hover:scale-125 transition-all duration-300 ease-in-out">
+                  {link.label}
+                </div> */}
+                <div className="flex flex-col items-center hover:scale-125 transition-all duration-300 ease-in-out">
+                  {link.icon}
+                  {link.label}
+                </div>
+                
                 {pathname === link.path ? (
                   <motion.div
                     className="h-[2px] w-full bg-blue-500 rounded-full absolute  z-0 left-0 -bottom-1"
