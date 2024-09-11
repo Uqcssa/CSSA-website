@@ -43,14 +43,14 @@ export default async function DashboardLayout({
                   },
                 //   上传商家的信息以及上传的链接
                   {
-                    label: "Create a merchant",
-                    path: "/dashboard/add-product",
+                    label: "Create merchant",
+                    path: "/dashboard/add-merchant",
                     icon: <Store size={20} />,
                   },
                 //  已经上传的商家及展示链接 
                   {
-                    label: "Products",
-                    path: "/dashboard/products",
+                    label: "Merchant",
+                    path: "/dashboard/merchants",
                     icon: <Package size={20} />,
                   },
                   //  上传活动的信息以及相应的上传链接
@@ -72,23 +72,17 @@ export default async function DashboardLayout({
     const cssaStudentLinks =
         session?.user.role === "cssaStudent"
             ? [
-                // settings 
-                {
-                    label:"Settings",
-                    path:"/dashboard/settings",
-                    icon:<Settings size={20}/>
-                },
                 //   上传商家的信息以及上传的链接
                   {
-                    label: "Create a merchant",
-                    path: "/dashboard/add-product",
-                    icon: <MdAddBusiness size={16} />,
+                    label: "Create merchant",
+                    path: "/dashboard/add-merchant",
+                    icon: <Store size={20} />,
                   },
                 //  已经上传的商家及展示链接 
                   {
-                    label: "Products",
-                    path: "/dashboard/products",
-                    icon: <Package size={16} />,
+                    label: "Merchants",
+                    path: "/dashboard/merchants",
+                    icon: <Package size={20} />,
                   },
              ]
             : []
