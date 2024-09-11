@@ -2,8 +2,10 @@
 
 import { eq } from "drizzle-orm";
 import { db } from "..";
-import { emailTokens, passwordResetTokens, users } from "../schema";
+import { emailTokens, passwordResetTokens, twoFactorTokens, users } from "../schema";
 import { date } from "drizzle-orm/pg-core";
+import crypto from "crypto"
+import { error } from "console";
 
 export const getVerificationTokenByEmail = async (email: string) => {
   try {
@@ -83,6 +85,59 @@ export const getPasswordResetTokenByEmail = async (email: string) =>{
   }
 }
 
+
+//这个函数用来获得two factor token by email
+export const getTwoFactorTokenByEmail = async (email:string) =>{
+  try {
+    const twoFactorToken = await db.query.twoFactorTokens.findFirst({
+      where: eq(twoFactorTokens.email, email )
+    })
+    return twoFactorToken
+  } catch (error) {
+    return null
+  }
+}
+
+//这个是用来验证是不是你本人发出的token,以及是否是数据库自己产生的token而不是黑客产生的token
+//通常是通过检测sendEmail twofactor function发送的 token是否在数据库中存在。
+export const getTwoFactorTokenByToken = async (token: string) =>{
+  try {
+    const twoFactorToken = await db.query.twoFactorTokens.findFirst({
+      where: eq(twoFactorTokens.token, token)
+    })
+    return twoFactorToken
+  } catch {
+    //这里一定要返回null,避免它返回没有 expires 属性的对象。
+    return null
+  }
+}
+
+//用来生成twoFactorToken的function
+export const generateTwoFactorToken =  async (email: string) =>{
+  try {
+    //create the verify number
+    const token = crypto.randomInt(100_000, 1_000_000).toString();
+    //hour expiry
+    const expires = new Date(new Date().getTime() + 3600 * 1000);
+
+    const existingToken = await getTwoFactorTokenByEmail(email)
+    if(existingToken){
+      await db.delete(twoFactorTokens).where(eq(twoFactorTokens.id, existingToken.id))
+    }
+    const twoFactorToken = await db
+      .insert(twoFactorTokens)
+      .values({
+        email,
+        token,
+        expires,
+      })
+      .returning()
+    return twoFactorToken
+  } catch (e) {
+    return  null
+  }
+}
+
 //修改密码时生成新的resettoken并发送
 export const generatePasswordResetToken = async(email: string) =>{
   try {
@@ -92,7 +147,7 @@ export const generatePasswordResetToken = async(email: string) =>{
 
     const existingToken = await getPasswordResetTokenByEmail(email)
 
-    //如果已经存在Token则删除这个token
+    //如果已经存在Token则删除这个token,将新的token存入进数据库
     if(existingToken){
       await db.delete(passwordResetTokens).where(eq(passwordResetTokens.id, existingToken.id))
     }

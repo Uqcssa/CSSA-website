@@ -35,7 +35,7 @@ export const settings = action(SettingsSchema, async(values)=>{
     values.newPassword = undefined;
     values.confirmYourPassword = undefined;
     values.isTwoFactorEnabled = false;
-} else {
+    } else {
     // Handle password change only for non-OAuth users
     if (values.password && values.newPassword && dbUser.password && values.confirmYourPassword) {
         const passwordMatch = await bcrypt.compare(values.password, dbUser.password);

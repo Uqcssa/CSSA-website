@@ -29,3 +29,17 @@ export const sendPasswordResetEmail = async(email:string, token: string) =>{
   if (error) return console.log(error)
   if (data) return data
 }
+
+
+//create function to send  two factor token  to email for checking
+export const sendTwoFactorTokenByEmail = async(email:string, token: string) =>{
+  const confirmLink = `${domain}/auth/login?token=${token}`
+  const { data, error } = await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>",
+      to: ['uqcssakundaxuelian@gmail.com'],
+      subject: "UQCSSA - Your Two Factor Token",
+      html: `<p>Your Confirmation code: ${token}</p>`,
+    })
+  if (error) return console.log(error)
+  if (data) return data
+}

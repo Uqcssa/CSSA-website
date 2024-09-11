@@ -4,14 +4,16 @@ import {createSafeActionClient} from 'next-safe-action'
 import {actionClient} from "@/lib/safe-action";
 import { eq } from 'drizzle-orm';
 import { db } from '..';
-import {users} from "../schema"
-import { generateEmailVerificationToken } from './tokens';
-import { sendVerificationEmail } from './email';
+import {twoFactorTokens, users} from "../schema"
+import { generateEmailVerificationToken, generateTwoFactorToken, getTwoFactorTokenByEmail } from './tokens';
+import { sendTwoFactorTokenByEmail, sendVerificationEmail } from './email';
 import { signIn } from '../auth';
 import { AuthError } from 'next-auth';
+import { error } from 'console';
+import bcrypt from "bcrypt"
 
 
-export const emailSignIn = actionClient(LoginSchema, async ({email, password, code}) => {
+export const emailSignIn = actionClient(LoginSchema, async ({email, password, Code}) => {
     try {
         //检查用户是否在数据库里
         const existingUser = await db.query.users.findFirst({
@@ -28,8 +30,48 @@ export const emailSignIn = actionClient(LoginSchema, async ({email, password, co
             await sendVerificationEmail(verificationToken[0].email, verificationToken[0].token);
             return { success: 'Confirmation Email Sent!' };
         }  
+        
+        // Check if password exists and is valid
+        if (!existingUser.password) {
+            return { error: "Password not set for this user" };
+        }
+        //在检测是否开启双因素验证前提前验证密码是否正确，若正确则检测双因素
+        const passwordValid = await bcrypt.compare(password, existingUser.password);
+        if (!passwordValid) {
+            return {error: "Email or Password Incorrect"};
+        }
 
         //Two factor to do(双因素验证)
+        if(existingUser.twoFactorEnabled && existingUser.email && passwordValid){
+            if(Code){
+                const twoFactorToken = await getTwoFactorTokenByEmail(
+                    existingUser.email
+                  )
+                  if (!twoFactorToken) {
+                    return { error: "Invalid Token" }
+                  }
+                  if (twoFactorToken.token !== Code) {
+                    return { error: "Confirmation number is Incorrect" }
+                  }
+                  const hasExpired = new Date(twoFactorToken.expires) < new Date()
+                  if (hasExpired) {
+                    return { error: "Confirmation number has expired" }
+                  }
+                  await db
+                    .delete(twoFactorTokens)
+                    .where(eq(twoFactorTokens.id, twoFactorToken.id))
+            }else{
+                const token = await generateTwoFactorToken(existingUser.email)
+
+                if (!token) {
+                    return { error: "Token not generated!" }
+                }
+
+                await sendTwoFactorTokenByEmail(token[0].email, token[0].token)
+                return { twoFactor: "Confirmation Number Sent!" }
+            }
+
+        }
 
         await signIn("credentials",{
             email,
