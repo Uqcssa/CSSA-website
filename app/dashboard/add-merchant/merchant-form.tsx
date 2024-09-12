@@ -65,21 +65,6 @@ export default function MerchantForm(){
                     </FormItem>
                 )}
                 />
-                {/* shop's discount */}
-                <FormField
-                control={form.control}
-                name="discountInformation"
-                render={({ field }) => (
-                    <FormItem className="py-2">
-                        <FormLabel>Discount Information</FormLabel>
-                        <FormControl>
-                            <Input placeholder="Discount Information" {...field} />
-                        </FormControl>
-                        
-                        <FormMessage />
-                    </FormItem>
-                )}
-                />
                 {/* shop's address */}
                 <FormField
                 control={form.control}
@@ -95,17 +80,52 @@ export default function MerchantForm(){
                     </FormItem>
                 )}
                 />
-                {/* shop's duration
+                {/* shop's Description */}
                 <FormField
                 control={form.control}
-                name="address"
+                name="description"
                 render={({ field }) => (
-                    <div className="flex flex-wrap gap-4">
-                        <TimeInput label="Event Time" />
-                        <TimeInput label="Event Time" defaultValue={new Time(11, 45)} />
-                    </div>
+                    <FormItem className="py-2">
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Description" {...field} />
+                        </FormControl>
+                        
+                        <FormMessage />
+                    </FormItem>
                 )}
-                /> */}
+                />
+                {/* shop's image */}
+                <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                    <FormItem className="py-2">
+                        <FormLabel>Image</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Address" {...field} />
+                        </FormControl>
+                        
+                        <FormMessage />
+                    </FormItem>
+                )}
+                />
+                {/* shop's discount */}
+                <FormField
+                control={form.control}
+                name="discountInformation"
+                render={({ field }) => (
+                    <FormItem className="py-2">
+                        <FormLabel>Discount Information</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Discount Information" {...field} />
+                        </FormControl>
+                        
+                        <FormMessage />
+                    </FormItem>
+                )}
+                />
+                
                 
                 <button className="shadow-[0_4px_14px_0_rgb(0,118,255,39%)] 
                         hover:shadow-[0_6px_20px_rgba(0,118,255,23%)] hover:bg-[rgba(0,118,255,0.9)] 

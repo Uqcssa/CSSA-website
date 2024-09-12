@@ -9,7 +9,7 @@ const TimeFormat = z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
 export const MerchantSchema = z.object({
     id: z.number().optional(),
     title:z.string().min(4,{
-        message:"Title must be at least 4 characters long",
+        message:"Name must be at least 4 characters long",
     }),
     image: z.string(),
     description:z.string().min(30,{
@@ -19,8 +19,5 @@ export const MerchantSchema = z.object({
         message:"Discount information must be at least 4 characters long",
     }),
     address:z.string(),
-    durationTime: z.object({
-        startTime: TimeFormat,
-        endTime: TimeFormat,
-    }),
+    
 })
