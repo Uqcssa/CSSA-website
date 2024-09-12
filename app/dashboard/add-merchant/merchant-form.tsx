@@ -26,6 +26,8 @@ import { Input } from "@/components/ui/input"
 // import {Time} from "@internationalized/date";
 import {useAction} from 'next-safe-action/hooks'
 import Tiptap from "./tiptap"
+import { createMerchant } from "@/server/actions/create-merchants"
+import { error } from "console"
 
 export default function MerchantForm(){
     const form = useForm<z.infer<typeof MerchantSchema>>({
@@ -41,8 +43,21 @@ export default function MerchantForm(){
         mode: "onChange",// the actual validation errors 
     })
 
-    const onSubmit = (values: z.infer<typeof MerchantSchema>) =>{
-        
+    // using useAction bound the createMerchant server action
+    const{execute, status} = useAction(createMerchant,{
+        onSuccess:(data) =>{
+            if(data?.success){
+                console.log(data)
+            }
+            
+        },
+        onError:(error) =>{
+            console.log(error)
+        }
+    })
+    // function used for sumbitting  the information input from the user 
+    async function onSubmit(values: z.infer<typeof MerchantSchema>){
+        execute(values);
     }
     return(
     <Card className="mx-9">
@@ -134,7 +149,7 @@ export default function MerchantForm(){
                         px-6 py-2 bg-[#0070f3] rounded-md text-white font-bold text-sm  transition 
                         duration-200 ease-linear"
                         type="submit"
-                        // disabled = {status === 'executing' }
+                        disabled = {status === 'executing' || !form.formState.isValid|| !form.formState.isDirty}
                         >
                            Sumbit
                 </button> 
