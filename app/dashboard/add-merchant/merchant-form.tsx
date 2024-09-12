@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input"
 // import {TimeInput} from "@nextui-org/date-input";
 // import {Time} from "@internationalized/date";
 import {useAction} from 'next-safe-action/hooks'
+import Tiptap from "./tiptap"
 
 export default function MerchantForm(){
     const form = useForm<z.infer<typeof MerchantSchema>>({
@@ -36,7 +37,8 @@ export default function MerchantForm(){
             discountInformation:"",
             address:"",
             // durationTime:
-        }
+        },
+        mode: "onChange",// the actual validation errors 
     })
 
     const onSubmit = (values: z.infer<typeof MerchantSchema>) =>{
@@ -61,7 +63,7 @@ export default function MerchantForm(){
                             <Input placeholder="Shop Name" {...field} />
                         </FormControl>
                         
-                        <FormMessage />
+                        <FormMessage className="text-red-600" />
                     </FormItem>
                 )}
                 />
@@ -76,7 +78,7 @@ export default function MerchantForm(){
                             <Input placeholder="Address" {...field} />
                         </FormControl>
                         
-                        <FormMessage />
+                        <FormMessage className="text-red-600" />
                     </FormItem>
                 )}
                 />
@@ -88,10 +90,10 @@ export default function MerchantForm(){
                     <FormItem className="py-2">
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                            <Input placeholder="Description" {...field} />
+                            <Tiptap  val={field.value}/>
                         </FormControl>
                         
-                        <FormMessage />
+                        <FormMessage className="text-red-600"/>
                     </FormItem>
                 )}
                 />
@@ -121,7 +123,7 @@ export default function MerchantForm(){
                             <Input placeholder="Discount Information" {...field} />
                         </FormControl>
                         
-                        <FormMessage />
+                        <FormMessage className="text-red-600"/>
                     </FormItem>
                 )}
                 />
@@ -132,7 +134,7 @@ export default function MerchantForm(){
                         px-6 py-2 bg-[#0070f3] rounded-md text-white font-bold text-sm  transition 
                         duration-200 ease-linear"
                         type="submit"
-                        disabled = {status === 'executing' }
+                        // disabled = {status === 'executing' }
                         >
                            Sumbit
                 </button> 

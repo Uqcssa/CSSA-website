@@ -153,7 +153,7 @@ export default function SettingsCard(session: SettingsForm){
                                     }}  
                                     content={{
                                         button({isUploading,uploadProgress}){
-                                            if(!isUploading) return <div>Change Avatar</div>
+                                            if(!isUploading) return <div className="font-bold ">Change Avatar</div>
                                             // Display the upload progress with destructured uploadProgress
                                             return <div>{uploadProgress.toString()}%</div>;
                                         },
@@ -269,7 +269,7 @@ export default function SettingsCard(session: SettingsForm){
                         <FormSuccess message={success} /> 
                         <button className="shadow-[0_4px_14px_0_rgb(0,118,255,39%)] 
                         hover:shadow-[0_6px_20px_rgba(0,118,255,23%)] hover:bg-[rgba(0,118,255,0.9)] 
-                        px-6 py-2 bg-[#0070f3] rounded-md text-white text-sm font-light transition 
+                        px-6 py-2 bg-[#0070f3] rounded-md text-white text-sm font-bold  transition 
                         duration-200 ease-linear"
                         type="submit"
                         disabled = {status === 'executing' || avatarUploading}
