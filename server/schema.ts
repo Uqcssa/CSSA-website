@@ -6,6 +6,7 @@ import {
     primaryKey,
     integer,
     pgEnum,
+    serial,
   } from "drizzle-orm/pg-core"
   import { drizzle } from "drizzle-orm/postgres-js"
   import type { AdapterAccount } from "next-auth/adapters"
@@ -92,4 +93,16 @@ import {
       compoundKey: primaryKey({columns:[vt.id, vt.token]}),
     })
   
+  )
+
+  //merchant schema
+  export const merchantSchema = pgTable('merchants',{
+    id:serial('id').primaryKey(),
+    description:text("description").notNull(),
+    title:text("title").notNull(),
+    created:timestamp("created").defaultNow(),
+    address:text("address").notNull(),
+    discountInformation:text("discountInformation").notNull(),
+  }
+
   )

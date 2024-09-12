@@ -32,7 +32,7 @@ export default function MerchantForm(){
         defaultValues:{
             title:'',
             description: '',
-            image: '',
+            // image: '',
             discountInformation:"",
             address:"",
             // durationTime:
@@ -95,7 +95,7 @@ export default function MerchantForm(){
                     </FormItem>
                 )}
                 />
-                {/* shop's image */}
+                {/* shop's image
                 <FormField
                 control={form.control}
                 name="image"
@@ -109,7 +109,7 @@ export default function MerchantForm(){
                         <FormMessage />
                     </FormItem>
                 )}
-                />
+                /> */}
                 {/* shop's discount */}
                 <FormField
                 control={form.control}
