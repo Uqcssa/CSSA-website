@@ -28,6 +28,9 @@ import {useAction} from 'next-safe-action/hooks'
 import Tiptap from "./tiptap"
 import { createMerchant } from "@/server/actions/create-merchants"
 import { error } from "console"
+import { useRouter } from "next/navigation"
+import { useToast } from '@chakra-ui/react'
+import { date } from "drizzle-orm/pg-core"
 
 export default function MerchantForm(){
     const form = useForm<z.infer<typeof MerchantSchema>>({
@@ -43,14 +46,42 @@ export default function MerchantForm(){
         mode: "onChange",// the actual validation errors 
     })
 
+    const router = useRouter();// redirect user to the merchants page after create merchant
+    //toast style
+    const toast = useToast()
     // using useAction bound the createMerchant server action
     const{execute, status} = useAction(createMerchant,{
         onSuccess:(data) =>{
+            if (data?.error) {
+                toast({
+                    title: `${data?.error}`,
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                })
+            }
             if(data?.success){
+                router.push("/dashboard/merchants")
+                toast({
+                    title: `${data?.success.message1}`,
+                    description: `${data?.success.message2}`,
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                })
                 console.log(data)
             }
             
         },
+        // onExecute:(data)=>{
+        //     toast({
+        //         title: `${data?.success.message3}`,
+        //         description: "Please wait",
+        //         status: 'loading',
+        //         duration: 9000,
+        //         isClosable: true,
+        //     })
+        // },
         onError:(error) =>{
             console.log(error)
         }

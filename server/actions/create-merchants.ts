@@ -20,14 +20,23 @@ export const createMerchant = action(
                     .update(merchantSchema)
                     .set({title, description, discountInformation, address})
                     .where(eq(merchantSchema.id,id)).returning();
-                return{success: `Merchant ${editedMerchant[0].title} has been Updated`}
+                return{
+                    success: {
+                    message1: 'Merchant Updeatd',
+                    message2: 'Merchant information Updated successfully',
+                }}
             }
             if(!id){
                 const newMerchant = await db
                 .insert(merchantSchema)
                 .values({title, description, discountInformation, address})
                 .returning()// returning() is very important 
-                return{success:`Product ${newMerchant[0].title} has been created`}
+                return{
+                    success: {
+                    message1: 'Product created',
+                    message2: 'Merchant information registered successfully',
+                    message3: 'Product Creating',
+                }}
             }
         } catch (error) {
             return{error: JSON.stringify(error)}
