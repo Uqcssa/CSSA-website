@@ -19,5 +19,4 @@ export const MerchantSchema = z.object({
         message:"Discount information must be at least 4 characters long",
     }),
     address:z.string(),
-    
 })
