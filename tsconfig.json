@@ -26,6 +26,6 @@
       ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/ui/button.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/ui/button.jsx", "components/ui/alert-dialog.jsx"],
   "exclude": ["node_modules"]
 }

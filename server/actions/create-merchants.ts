@@ -4,6 +4,7 @@ import { createSafeActionClient } from "next-safe-action"
 import { db } from "..";
 import { merchantSchema } from "../schema";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 const action = createSafeActionClient();
 
@@ -31,6 +32,7 @@ export const createMerchant = action(
                 .insert(merchantSchema)
                 .values({title, description, discountInformation, address})
                 .returning()// returning() is very important 
+                revalidatePath("/dashboard/merchants")
                 return{
                     success: {
                     message1: 'Product created',

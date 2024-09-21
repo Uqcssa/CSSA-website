@@ -56,7 +56,7 @@ export default function MerchantForm(){
                 toast({
                     title: `${data?.error}`,
                     status: 'error',
-                    duration: 9000,
+                    duration: 3000,
                     isClosable: true,
                 })
             }
