@@ -28,9 +28,11 @@ import {useAction} from 'next-safe-action/hooks'
 import Tiptap from "./tiptap"
 import { createMerchant } from "@/server/actions/create-merchants"
 import { error } from "console"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from '@chakra-ui/react'
 import { date } from "drizzle-orm/pg-core"
+import { getMerchant } from "@/server/actions/get-merchant"
+import { useEffect } from "react"
 
 export default function MerchantForm(){
     const form = useForm<z.infer<typeof MerchantSchema>>({
@@ -46,9 +48,42 @@ export default function MerchantForm(){
         mode: "onChange",// the actual validation errors 
     })
 
+
     const router = useRouter();// redirect user to the merchants page after create merchant
-    //toast style
-    const toast = useToast()
+    const toast = useToast() //toast style
+    //create the unique function to check the product exist or not
+    const searchParams = useSearchParams()
+    const editMode = searchParams.get("id")
+    const checkMerchant = async (id: number) => {
+        if(editMode){
+            const data = await getMerchant(id)
+            if(data.error){
+                toast({
+                    title: `${data?.error}`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                })
+                router.push('/dashboard/merchants')
+                return
+            }
+            if(data.success){
+                const id = parseInt(editMode);
+                form.setValue("title",data.success.title)
+                form.setValue("address",data.success.address)
+                form.setValue("description",data.success.description)
+                form.setValue("discountInformation",data.success.discountInformation)
+                form.setValue("id",data.success.id)
+            }
+        }
+    }
+
+    //useEffect
+    useEffect(() =>{
+        if(editMode){
+            checkMerchant(parseInt(editMode))
+        }
+    },[])
     // using useAction bound the createMerchant server action
     const{execute, status} = useAction(createMerchant,{
         onSuccess:(data) =>{
@@ -93,8 +128,14 @@ export default function MerchantForm(){
     return(
     <Card className="mx-9">
         <CardHeader>
-            <CardTitle>Create Merchant</CardTitle>
-            <CardDescription className="text-gray-500 py-1">Sumbit your Merchant information</CardDescription>
+            <CardTitle>
+                {editMode ? <p>Edit Merchant</p>: <p>Create Merchant</p>}
+            </CardTitle>
+            <CardDescription className="text-gray-500 py-1">
+                {editMode ? <p>Make changes to existing Merchant</p>
+                : 
+                <p>Sumbit your Merchant information</p>}
+            </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>

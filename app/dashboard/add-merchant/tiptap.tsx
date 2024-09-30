@@ -7,6 +7,7 @@ import CharacterCount from '@tiptap/extension-character-count'
 import Typography from '@tiptap/extension-typography'
 import { Bold, Italic, List, ListOrdered, Strikethrough } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
+import { useEffect } from 'react'
 
 const Tiptap = ({val}: {val: string}) => {
   const { setValue } = useFormContext() //
@@ -48,13 +49,15 @@ const Tiptap = ({val}: {val: string}) => {
     content: val,
   })
 
-  if (!editor) {
-    return null
-  }
+ 
 
   const percentage = editor
     ? Math.round((100 / limit ) * editor.storage.characterCount.characters())
-    : 0
+    : 0;
+  //set content when the description is in edit mode
+  useEffect(() => {
+    if (editor?.isEmpty) editor.commands.setContent(val)
+  }, [val])
 
   return(
     <div className='flex flex-col gap-3'>
@@ -135,8 +138,7 @@ const Tiptap = ({val}: {val: string}) => {
             fill="white"
           />
         </svg>
-
-        <p className='text-blue-600 text-sm'>{editor.storage.characterCount.characters()} / {limit} characters</p>
+        <p className='text-blue-600 text-sm'>{editor?.storage.characterCount.characters()} / {limit} characters</p>
         
       </div>
     </div>

@@ -20,12 +20,15 @@ export const createMerchant = action(
                 const editedMerchant = await db
                     .update(merchantSchema)
                     .set({title, description, discountInformation, address})
-                    .where(eq(merchantSchema.id,id)).returning();
+                    .where(eq(merchantSchema.id,id))
+                    .returning()
+                revalidatePath("/dashboard/merchants")
                 return{
                     success: {
-                    message1: 'Merchant Updeatd',
+                    message1: 'Merchant Updated',
                     message2: 'Merchant information Updated successfully',
                 }}
+               
             }
             if(!id){
                 const newMerchant = await db
@@ -35,9 +38,9 @@ export const createMerchant = action(
                 revalidatePath("/dashboard/merchants")
                 return{
                     success: {
-                    message1: 'Product created',
+                    message1: 'Merchant created',
                     message2: 'Merchant information registered successfully',
-                    message3: 'Product Creating',
+                    message3: 'Merchant Creating',
                 }}
             }
         } catch (error) {

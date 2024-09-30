@@ -101,7 +101,10 @@ const ActionCell = ({row}: {row:Row<MerchantsColumn>}) =>{
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem className="text-sm p-1">
-                        <Link href={`/dashboard/add-merchant?id=${merchant.id}`}/>
+                        {/* this is how to pass id to the server, backend*/}
+                        <Link href={`/dashboard/add-merchant?id=${merchant.id}`}>
+                            Edit Merchant
+                        </Link>
                     </DropdownMenuItem>
                     {/* this is the delete confirmation */}
                     <AlertDialog>
