@@ -1,0 +1,1 @@
+ALTER TABLE "merchantTags" RENAME COLUMN "type" TO "merchant_type";

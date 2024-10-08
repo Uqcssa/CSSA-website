@@ -85,6 +85,69 @@
       "when": 1726151432365,
       "tag": "0011_marvelous_the_enforcers",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1728032258368,
+      "tag": "0012_messy_jubilee",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1728032594112,
+      "tag": "0013_messy_mastermind",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1728047049106,
+      "tag": "0014_furry_night_thrasher",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1728047367036,
+      "tag": "0015_rapid_saracen",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1728047655440,
+      "tag": "0016_safe_red_ghost",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1728049064021,
+      "tag": "0017_yielding_jetstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1728050043888,
+      "tag": "0018_dry_makkari",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1728050326832,
+      "tag": "0019_reflective_talisman",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1728050501347,
+      "tag": "0020_deep_baron_zemo",
+      "breakpoints": true
     }
   ]
 }

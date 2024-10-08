@@ -9,18 +9,30 @@ import { columns } from "./columns"
 export default async function merchants() {
   //check if user login then show the settings page
   const session = await auth()
+  if(session?.user.role === "user"){
+
+  }
   const merchants = await db.query.merchantSchema.findMany({
     orderBy:(merchantSchema,{desc}) => [desc(merchantSchema.id)],
+    with:{
+      merchantTags:{
+        with:{
+          tags:true
+        }
+      }
+    }
   })
   if(!merchants) throw new Error("Merchant Not Found!")
   const dataTable = merchants.map((merchant) =>{
+    const tags = merchant.merchantTags.map((tagRelation) => tagRelation.tags) 
+                .filter((tag) => tag !== null && typeof tag === 'string');  // 确保过滤掉 `null` 和非字符串的值
     return{
         id: merchant.id,
         title: merchant.title,
         address: merchant.address,
         description: merchant.description,
         discountInformation: merchant.discountInformation,
-        variants:[],
+        merchant_type:tags,//tags is an array so dont use [] to include it
         image: placeholder.src,
     }
 

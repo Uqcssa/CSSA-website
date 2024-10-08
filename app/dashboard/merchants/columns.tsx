@@ -37,7 +37,7 @@ type MerchantsColumn ={
     title:string,
     address:string,
     image:string,
-    variants:any,
+    merchant_type:string[],
     id:number
 }
 
@@ -160,8 +160,8 @@ export const columns: ColumnDef<MerchantsColumn>[] = [
         header:"Address",
     },
     {
-        accessorKey: "variants",
-        header:"Variants",
+        accessorKey: "merchant_type",
+        header:"Merchant Type",
     },
     {
         accessorKey: "image",
