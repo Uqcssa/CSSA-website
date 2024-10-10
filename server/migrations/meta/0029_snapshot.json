@@ -1,6 +1,6 @@
 {
-  "id": "effcdf59-960f-4889-969f-9a768f4f8a8e",
-  "prevId": "3ff9f394-ed1b-4a1d-b768-b1e3cea49d23",
+  "id": "c4753771-85bd-41ce-b06e-6a72478ce12a",
+  "prevId": "3575bda9-bf3c-4f3b-b0bd-51a05dd9c6a0",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -288,11 +288,13 @@
           "primaryKey": true,
           "notNull": true
         },
-        "merchant_type": {
-          "name": "merchant_type",
-          "type": "varchar(20)",
+        "types": {
+          "name": "types",
+          "type": "types",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "'中餐'"
         }
       },
       "indexes": {},
@@ -530,6 +532,25 @@
     }
   },
   "enums": {
+    "public.types": {
+      "name": "types",
+      "schema": "public",
+      "values": [
+        "清真餐厅",
+        "中餐",
+        "西餐",
+        "咖啡",
+        "甜品",
+        "烧烤",
+        "火锅",
+        "日料",
+        "韩餐",
+        "留学教育",
+        "生活服务",
+        "休闲娱乐",
+        "线上商家"
+      ]
+    },
     "public.roles": {
       "name": "roles",
       "schema": "public",

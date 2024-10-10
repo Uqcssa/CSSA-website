@@ -148,6 +148,76 @@
       "when": 1728050501347,
       "tag": "0020_deep_baron_zemo",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1728390469227,
+      "tag": "0021_motionless_eddie_brock",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1728390881171,
+      "tag": "0022_bitter_brood",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1728391059847,
+      "tag": "0023_steady_molten_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1728391224859,
+      "tag": "0024_aromatic_ulik",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1728391316230,
+      "tag": "0025_remarkable_blazing_skull",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1728391411955,
+      "tag": "0026_acoustic_kate_bishop",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1728391687109,
+      "tag": "0027_yielding_marvel_zombies",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1728391935795,
+      "tag": "0028_stale_sersi",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1728392315900,
+      "tag": "0029_cheerful_snowbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1728561000722,
+      "tag": "0030_melted_ultron",
+      "breakpoints": true
     }
   ]
 }

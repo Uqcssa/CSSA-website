@@ -1,6 +1,6 @@
 {
-  "id": "7cda5c30-0102-4d20-8106-ce9fa4c4182b",
-  "prevId": "1f8c2351-c8f9-4efb-a49f-89c6ac63cc78",
+  "id": "94d50f59-dfb0-484d-ab75-ce6343edc0d3",
+  "prevId": "c4753771-85bd-41ce-b06e-6a72478ce12a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -284,15 +284,17 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true
         },
-        "merchant_type": {
-          "name": "merchant_type",
-          "type": "varchar(20)",
+        "types": {
+          "name": "types",
+          "type": "types",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "'中餐'"
         }
       },
       "indexes": {},
@@ -371,7 +373,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "tagsToMerchant_merchantTags_id_merchantTags_id_fk": {
@@ -384,7 +386,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -530,6 +532,27 @@
     }
   },
   "enums": {
+    "public.types": {
+      "name": "types",
+      "schema": "public",
+      "values": [
+        "清真餐厅",
+        "中餐",
+        "西餐",
+        "甜品",
+        "饮料",
+        "咖啡",
+        "饮品",
+        "烧烤",
+        "火锅",
+        "日料",
+        "韩餐",
+        "留学教育",
+        "生活服务",
+        "休闲娱乐",
+        "线上商家"
+      ]
+    },
     "public.roles": {
       "name": "roles",
       "schema": "public",

@@ -18,7 +18,7 @@ import { relations } from "drizzle-orm"
 export const RoleEnum = pgEnum("roles",["user", "admin", "cssaStudent"])
 export const MerchantTypesEnum = pgEnum("types",
   [
-    "清真餐厅","中餐","西餐","甜品" ,"饮料", "咖啡","饮品","烧烤","火锅","日料","韩餐"
+    "清真餐厅","中餐","西餐","甜品","饮料","咖啡","饮品","烧烤","火锅","日料","韩餐"
     ,"留学教育","生活服务","休闲娱乐","线上商家",
   ])
 

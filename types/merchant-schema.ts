@@ -19,4 +19,7 @@ export const MerchantSchema = z.object({
         message:"Discount information must be at least 4 characters long",
     }),
     address:z.string(),
+    merchant_type: z.array(z.string()).nonempty({
+        message: "At least one tag must be selected",
+    }), // 允许选择多个标签
 })

@@ -10,7 +10,7 @@ const action = createSafeActionClient();
 
 export const createMerchant = action(
     MerchantSchema,
-    async({title, description, discountInformation, address, id}) =>{
+    async({title, description, discountInformation, address, id, merchant_type}) =>{
         try {
             if(id){
                 const currentMerchant = await db.query.merchantSchema.findFirst({
