@@ -16,11 +16,7 @@ import {createId} from '@paralleldrive/cuid2'
 import { relations } from "drizzle-orm"
 
 export const RoleEnum = pgEnum("roles",["user", "admin", "cssaStudent"])
-export const MerchantTypesEnum = pgEnum("types",
-  [
-    "清真餐厅","中餐","西餐","甜品","饮料","咖啡","饮品","烧烤","火锅","日料","韩餐"
-    ,"留学教育","生活服务","休闲娱乐","线上商家",
-  ])
+
 
 export const users = pgTable("user", {
   id: text("id")
@@ -152,7 +148,7 @@ export const ImagesToMerchantRelation = relations(mImages,({one}) => ({
 export const merchantTags = pgTable('merchantTags',{
   id: integer("id").primaryKey(),
       // 使用 nextval 实现 auto-increment
-  tags: MerchantTypesEnum("types").default("中餐"), 
+  tags: varchar('tags', { length: 255 }).notNull(), 
 })
 
 //define the third table combine tags and merchantSchema table

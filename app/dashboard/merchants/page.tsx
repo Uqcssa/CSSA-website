@@ -10,7 +10,7 @@ export default async function merchants() {
   //check if user login then show the settings page
   const session = await auth()
   if(session?.user.role === "user"){
-
+    return { error: "You don't have permission to access this page!" };
   }
   const merchants = await db.query.merchantSchema.findMany({
     orderBy:(merchantSchema,{desc}) => [desc(merchantSchema.id)],
@@ -24,8 +24,8 @@ export default async function merchants() {
   })
   if(!merchants) throw new Error("Merchant Not Found!")
   const dataTable = merchants.map((merchant) =>{
-    const tags = merchant.merchantTags.map((tagRelation) => tagRelation.tags) 
-                .filter((tag) => tag !== null && typeof tag === 'string');  // 确保过滤掉 `null` 和非字符串的值
+    const tags = merchant.merchantTags.map((tagRelation) => tagRelation.tags.tags) 
+              // 确保过滤掉 `null` 和非字符串的值
     return{
         id: merchant.id,
         title: merchant.title,

@@ -99,17 +99,17 @@ const ActionCell = ({row}: {row:Row<MerchantsColumn>}) =>{
                 </button>
                    
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
+                <DropdownMenuContent className="bg-white h-full">
                     <DropdownMenuItem className="text-sm p-1">
                         {/* this is how to pass id to the server, backend*/}
-                        <Link href={`/dashboard/add-merchant?id=${merchant.id}`}>
+                        <Link className="w-full cursor-pointer hover:bg-gray-100" href={`/dashboard/add-merchant?id=${merchant.id}`}>
                             Edit Merchant
                         </Link>
                     </DropdownMenuItem>
                     {/* this is the delete confirmation */}
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <button className="text-sm p-1">Delete Merchant</button>
+                            <button className="text-sm  p-1 cursor-pointer hover:bg-gray-100">Delete Merchant</button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="bg-white">
                             <AlertDialogHeader>
@@ -162,6 +162,25 @@ export const columns: ColumnDef<MerchantsColumn>[] = [
     {
         accessorKey: "merchant_type",
         header:"Merchant Type",
+         //change tags style
+        cell:({row}) =>{
+            const cellTags = row.getValue("merchant_type") as string[] || []
+            return(
+                <div className="flex flex-wrap gap-2 ">
+                    {cellTags.map((item,index) => (
+                    <button
+                    key={index}
+                    className="rounded-md text-ml px-2 py-1 font-bold
+                                flex items-center bg-[#0070f3] text-white"
+                     >
+                            {item}
+                         
+                    </button>
+                    ))}
+                </div> 
+            )
+        }
+        
     },
     {
         accessorKey: "image",

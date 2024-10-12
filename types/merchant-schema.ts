@@ -8,12 +8,12 @@ import * as z from "zod"
 
 export const MerchantSchema = z.object({
     id: z.number().optional(),
-    title:z.string().min(4,{
-        message:"Name must be at least 4 characters long",
+    title:z.string().min(3,{
+        message:"Name must be at least 3 characters long",
     }),
     // image: z.string(),
-    description:z.string().min(30,{
-        message:"Description must be at least 30 characters long",
+    description:z.string().min(25,{
+        message:"Description must be at least 25 characters long",
     }),
     discountInformation:z.string().min(3,{
         message:"Discount information must be at least 4 characters long",

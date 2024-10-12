@@ -27,5 +27,6 @@ export const reset = action(ResetSchema, async ({ email }) => {
       passwordResetToken[0].email,
       passwordResetToken[0].token
     )
+   
     return { success: "Reset Email Sent" }
   })

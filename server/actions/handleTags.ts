@@ -1,37 +1,34 @@
 'use server'
 
-import { eq } from "drizzle-orm";
-import { db } from "..";
-import { merchantTags, } from "../schema"; 
-import { error } from "console";
+import { eq, inArray } from "drizzle-orm"
+import { db } from ".."
+import { merchantTags, tagsTo } from "../schema"
 
-// 定义常量标签
-const predefinedTags = ["清真餐厅", "中餐", "西餐", "甜品", "咖啡", "饮品", "烧烤", "火锅", "日料", "韩餐", "留学教育", "生活服务", "休闲娱乐", "线上商家"];
 
-export async function handleTags(tags: string[], merchantId: number) {
-  if (tags && tags.length > 0) {
-    for (const tagName of tags) {
-      // 检查传入的标签是否在预定义的常量标签中
-      if (predefinedTags.includes(tagName)) {
-        // 查找标签ID
-        const tag = await db.query.merchantTags.findFirst({
-          where: eq(merchantTags.tags, tagName),
-        });
-
-        if (!tag) {
-          throw new Error(`标签 ${tagName} 未在数据库中找到`);
-        }
-
-        const tagId = tag.id;
-
-        // 将标签与商家关联
-        await db.insert(merchantTagsSchema).values({
-          merchant_id: merchantId,
-          tag_id: tagId,
-        });
-      } else {
-        console.error(`标签 ${tagName} 不在预定义列表中`);
-      }
+export async function handleTags(merchant_type: string[], merchantId: number) {
+    try {
+      // 将字符串形式的id转为整数
+      const tagIds = merchant_type.map((typeId) => parseInt(typeId, 10));
+  
+      // 构建插入数据
+      const tagInserts = tagIds.map((tagId) => ({
+        merchantId,  // 来自商家表的id
+        merchantTagsId: tagId,  // 对应的标签id
+      }));
+  
+      // 将数据插入到tagsTo表
+      await db.insert(tagsTo).values(tagInserts);
+  
+      return {
+        success: true,
+        message: "Tags inserted successfully",
+        insertedTags: tagInserts,  // 调试信息，包含插入的tags数据
+      };
+    } catch (error) {
+      return {
+        error: "Failed to insert tags",
+        debugInfo: error,  // 捕获并返回错误信息
+      };
     }
   }
-}
+  

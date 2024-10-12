@@ -1,4 +1,5 @@
 import {SelectGroup, SelectItem, SelectLabel } from "@/components/ui/select";
+import { Value } from "@radix-ui/react-select";
 import { IoRestaurantSharp } from "react-icons/io5";
 
 
@@ -28,3 +29,20 @@ export const selectOptions = [
     </SelectGroup>
  
 ];
+
+export const MerchantTypeMap: { [value: string]: string } = {
+    "1": "清真餐厅",
+    "2": "中餐",
+    "3": "西餐",
+    "4": "烧烤",
+    "5": "火锅",
+    "6": "日料",
+    "7": "韩餐",
+    "8": "甜品",
+    "9": "咖啡",
+    "10": "奶茶饮料",
+    "11": "留学教育",
+    "12": "生活服务",
+    "13": "休闲娱乐",
+    "14": "线上商家",
+}
