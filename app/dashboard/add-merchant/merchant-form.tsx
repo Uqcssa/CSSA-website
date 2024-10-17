@@ -274,8 +274,11 @@ export default function MerchantForm(){
                                                 {selectedItems.map((item,index) => (
                                                     <button
                                                         key={index}
-                                                        className="rounded-full text-ml px-2 py-1 font-bold
-                                                                    flex items-center bg-[#0070f3] text-white"
+                                                        className="flex items-center px-3 py-1 text-sm font-medium
+                                                                rounded-full shadow-md transition-all duration-300 ease-in-out
+                                                                bg-gradient-to-r from-blue-400 to-blue-600 text-white
+                                                                hover:from-blue-500 hover:to-blue-700
+                                                                hover:scale-110 hover:shadow-lg "
                                                         onClick={() => handleRemove(item)}
                                                     >
                                                         {MerchantTypeMap[item]}
