@@ -1,5 +1,6 @@
 
 import * as z from "zod"
+import { Images } from "./images-schema"
 
 // //set the time format
 // const TimeFormat = z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
@@ -22,4 +23,7 @@ export const MerchantSchema = z.object({
     merchant_type: z.array(z.string()).nonempty({
         message: "At least one tag must be selected",
     }), // 允许选择多个标签
+    images:z.array(Images).max(10,{
+        message:"You can only upload up to 10 images."
+    })
 })

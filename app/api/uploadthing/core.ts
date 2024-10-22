@@ -1,3 +1,4 @@
+import { metadata } from "@/app/layout";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
  
@@ -11,6 +12,11 @@ export const ourFileRouter = {
     async ({ metadata, file }) => {}
 
   ),
+  //Define the Merchant Images rules
+  mImage:f({image:{maxFileCount: 10,maxFileSize:"16MB"},
+  }).onUploadComplete(async ({metadata,file}) => {
+    console.log(file)
+  }),
 } satisfies FileRouter;
  
 export type OurFileRouter = typeof ourFileRouter;

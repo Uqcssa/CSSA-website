@@ -2,7 +2,7 @@
 
 import { MerchantSchema } from "@/types/merchant-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import * as  z  from "zod"
 import {
     Card,
@@ -43,6 +43,7 @@ import { Select,
     } from "@/components/ui/select"
 import { CupSoda, HandPlatter, UtensilsCrossed, X } from "lucide-react"
 import { MerchantTypeMap } from "./selectOptions"
+import MerchantImages from "./Images"
 
 
 
@@ -59,6 +60,7 @@ export default function MerchantForm(){
             address:"",
             // durationTime:
             merchant_type:[],
+            images: [],
         },
         mode: "onChange",// the actual validation errors 
     })
@@ -191,14 +193,14 @@ export default function MerchantForm(){
             </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
+          <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                 <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                     <FormItem className="py-2">
-                        <FormLabel>Shop's Name</FormLabel>
+                        <FormLabel className="font-bold">Shop's Name</FormLabel>
                         <FormControl>
                             <Input placeholder="Shop Name" {...field} />
                         </FormControl>
@@ -214,7 +216,7 @@ export default function MerchantForm(){
                 name="address"
                 render={({ field }) => (
                     <FormItem className="py-2">
-                        <FormLabel>Address</FormLabel>
+                        <FormLabel className="font-bold">Address</FormLabel>
                         <FormControl>
                             <Input placeholder="Address" {...field} />
                         </FormControl>
@@ -230,7 +232,7 @@ export default function MerchantForm(){
                         name="merchant_type"
                         render={(field) => (
                         <FormItem className="py-2">
-                                    <FormLabel>
+                                    <FormLabel className="font-bold">
                                         Merchant Type
                                         <span className="text-gray-500 text-sm ml-3">(multiple choices, at most 3)</span>
                                     </FormLabel>
@@ -293,13 +295,16 @@ export default function MerchantForm(){
                                 </FormItem>
                             )}
                     />
+
+                {/* shop's Images */}
+                    <MerchantImages/>
                 {/* shop's Description */}
                 <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
                     <FormItem className="py-2">
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel className="font-bold">Description</FormLabel>
                         <FormControl>
                             <Tiptap  val={field.value}/>
                         </FormControl>
@@ -329,7 +334,7 @@ export default function MerchantForm(){
                 name="discountInformation"
                 render={({ field }) => (
                     <FormItem className="py-2">
-                        <FormLabel>Discount Information</FormLabel>
+                        <FormLabel className="font-bold">Discount Information</FormLabel>
                         <FormControl>
                             <Input placeholder="Discount Information" {...field} />
                         </FormControl>
@@ -347,11 +352,10 @@ export default function MerchantForm(){
                         type="submit"
                         disabled = {status === 'executing' || !form.formState.isValid|| !form.formState.isDirty}
                         >
-                            
                            Sumbit
                 </button> 
             </form>
-          </Form>
+          </FormProvider>
         </CardContent>
         <CardFooter>
             
