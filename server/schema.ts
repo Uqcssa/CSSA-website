@@ -130,10 +130,8 @@ export const mImages = pgTable('mImages',{
   id:serial('id').primaryKey(),
   merchantId:integer('merchant_id').references(() =>merchantSchema.id,{onDelete:'cascade'})
              .notNull(),
-  size:real('size').notNull(),
-  imageType:varchar('merchant_type',{ length: 50 }).notNull(),
-  order:real('order').notNull(),
   updated:timestamp("created").defaultNow(),
+  name: text("name").notNull(),
   imageUrl:text('image_url').notNull(),
 })
 

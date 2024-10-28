@@ -20,7 +20,9 @@ import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { X } from "lucide-react"
 import { Reorder } from "framer-motion"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { deleteImage } from "@/server/actions/editImageMode"
+import { useToast } from "@chakra-ui/react"
 
 export default function MerchantImages() {
     const {getValues, control, setError} = useFormContext<z.infer<typeof MerchantSchema>>()
@@ -28,8 +30,29 @@ export default function MerchantImages() {
         control,
         name:'images'
     })
-    //set state for drag to change the image order
-    const [active, setActive] = useState(0)
+
+    const toast = useToast() //toast style
+    //this is remove image from the server function
+    
+    const handleRemove = async (index: number,imageKey: string) =>{
+        const res = await deleteImage(imageKey);
+        if(res.success){
+            toast({
+                title: `${res?.success}`,
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            })
+            remove(index);  // 删除图片成功后，再从 fields 中移除
+            console.log('After remove:', fields);     
+        }
+        console.log(fields)
+    }
+
+    useEffect(() => {
+        console.log('Fields updated:', fields);  // 当 fields 变化时打印其状态
+    }, [fields]);
+    
     
     return(
         <div>
@@ -40,7 +63,9 @@ export default function MerchantImages() {
                     <FormItem className="py-2">
                         <FormLabel className="font-bold">
                             Merchant Image
-                            <span className="text-gray-500 text-sm ml-3">(upload Images, at most 10)</span>
+                            <span className="text-gray-500 text-sm ml-3 font-bold">
+                                (Upload Images, <span className="text-red-600 font-bold">At most 10</span>)
+                            </span>
                         </FormLabel>
                         <FormControl>
                            <UploadDropzone
@@ -72,7 +97,7 @@ export default function MerchantImages() {
                                     if(files.length == 10){
                                         setError("images", {
                                             type: "validate",
-                                            message: "You can only upload up to 10 images.",
+                                            message: "You can only upload up to 9 images.",
                                         });
                                         return [];
                                     }
@@ -100,7 +125,9 @@ export default function MerchantImages() {
                                                 })
                                             }
                                         }
+                                      
                                     })
+                                    return
                                 }}
                            />
                         </FormControl>
@@ -125,9 +152,11 @@ export default function MerchantImages() {
                                     "overflow-hidden text-sm font-bold text-gray-500 hover:text-blue-500"
                                     )
                                 }
-                                key={field?.id}
+                                key={field.url}
                             >
-                                <CardContent className="p-0">
+                                <CardContent className="p-0"
+                               
+                                >
                                 <div className="relative aspect-square">
                                     <Image
                                     src={field.url}
@@ -135,17 +164,31 @@ export default function MerchantImages() {
                                     layout="fill"
                                     objectFit="cover"
                                     />
+                                    
                                 </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between items-center p-2">
                                     <div className="flex-col items-center gap-6">
                                         <p className="font-sm">{field.name}</p> 
+                                     
                                         <p className="font-sm mt-1">{(field.size/(1024*1024)).toFixed(2)}MB</p>
                                     </div>
                                     
                                     <button
                                         className="hover:bg-destructive hover:text-destructive-foreground"
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                        
+                                            if (field?.key){
+                                                handleRemove(index, field.key);  // Only call if key is not undefined
+                                            }
+                                            
+                                        }}
                                     >
+                                        {/* const promises =[];
+                                        for (let i = 0; i < files.length; i++) {
+                                            promises.push(storeImage(files[i]));    
+                                        } */}
                                         <X className="h-4 w-4" />
                                         <span className="sr-only">Remove {field.name}</span>
                                     </button>

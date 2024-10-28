@@ -68,6 +68,7 @@ export default function MerchantForm(){
 
     const router = useRouter();// redirect user to the merchants page after create merchant
     const toast = useToast() //toast style
+    
     //create the unique function to check the product exist or not
     const searchParams = useSearchParams()
     const editMode = searchParams.get("id")

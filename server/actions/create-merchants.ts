@@ -2,7 +2,7 @@
 import { MerchantSchema } from "@/types/merchant-schema";
 import { createSafeActionClient } from "next-safe-action"
 import { db } from "..";
-import { merchantSchema, tagsTo, users } from "../schema";
+import { merchantSchema, mImages, tagsTo, users } from "../schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
@@ -12,7 +12,7 @@ const action = createSafeActionClient();
 
 export const createMerchant = action(
     MerchantSchema,
-    async({title, description, discountInformation, address, id, merchant_type}) =>{
+    async({title, description, discountInformation, address, id, merchant_type, images}) =>{
         //check Authentication:
         const user = await auth()
         
@@ -40,12 +40,20 @@ export const createMerchant = action(
                     return { error: "You don't have permission to edit this merchant!" };
                 }
 
+                //update the merchant information 
                 const editedMerchant = await db
                     .update(merchantSchema)
                     .set({title, description, discountInformation, address})
                     .where(eq(merchantSchema.id,id))
                     .returning()
-                
+
+                //update the image to the database
+                // const editedImage = await db
+                //     .update(mImages)
+                //     .set({updated: new Date()})
+                //     .where(eq(mImages.id,id))
+                //     .returning()
+
                 //update  the tags
                 await db.delete(tagsTo).where(eq(tagsTo.merchantId, id))
                 await handleTags(merchant_type, id);
