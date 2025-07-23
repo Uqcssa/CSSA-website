@@ -44,24 +44,37 @@ import { Select,
 import { CupSoda, HandPlatter, UtensilsCrossed, X } from "lucide-react"
 import { MerchantTypeMap } from "./selectOptions"
 import MerchantImages from "./Images"
+import { checkImageList } from "@/server/actions/check-imageUrlList"
 
 
 
 
 export default function MerchantForm(){
+     //create the unique function to check the product exist or not
+    const searchParams = useSearchParams()
+    const editMode = searchParams.get("id")
+    const exData = editMode ? checkImageList(parseInt(editMode)) : null;
+    
     //check the input is valid?
     const form = useForm<z.infer<typeof MerchantSchema>>({
         resolver: zodResolver(MerchantSchema),
-        defaultValues:{
-            title:'',
-            description: '',
-            // image: '',
-            discountInformation:"",
-            address:"",
-            // durationTime:
-            merchant_type:[],
-            images: [],
-        },
+        defaultValues: editMode && exData
+        ? {
+              title: '',
+              description: '',
+              discountInformation: '',
+              address: '',
+              merchant_type: [],
+              images:  exData || [], // 后端返回的图片
+          }
+        : {
+              title: '',
+              description: '',
+              discountInformation: '',
+              address: '',
+              merchant_type: [],
+              images: [], // 新建 merchant 时为空
+          },
         mode: "onChange",// the actual validation errors 
     })
 
@@ -70,8 +83,6 @@ export default function MerchantForm(){
     const toast = useToast() //toast style
     
     //create the unique function to check the product exist or not
-    const searchParams = useSearchParams()
-    const editMode = searchParams.get("id")
     const checkMerchant = async (id: number) => {
         if(editMode){
             const data = await getMerchant(id)
@@ -93,7 +104,8 @@ export default function MerchantForm(){
                 form.setValue("description",data.success.description)
                 form.setValue("discountInformation",data.success.discountInformation)
                 form.setValue("id",data.success.id)
-                form.setValue("merchant_type", tags.success as [string, ...string[]])
+                const tagStrings = data.success.merchantTags.map((tag: any) => tag.tags.tags)
+                form.setValue("merchant_type", tagStrings as [string, ...string[]]);
             }
         }
     }
@@ -146,7 +158,7 @@ export default function MerchantForm(){
                     title: `${data?.success.message1}`,
                     description: `${data?.success.message2}`,
                     status: 'success',
-                    duration: 3000,
+                    duration: 9000,
                     isClosable: true,
                 })
                 console.log(data)
@@ -298,7 +310,8 @@ export default function MerchantForm(){
                     />
 
                 {/* shop's Images */}
-                    <MerchantImages/>
+                <MerchantImages  id={editMode ? parseInt(editMode) : undefined} />
+
                 {/* shop's Description */}
                 <FormField
                 control={form.control}

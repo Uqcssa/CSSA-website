@@ -40,7 +40,7 @@ const action = createSafeActionClient();
 //   };
   
  
-
+// remove images from the database 
 export const deleteImage = async (imageKey: string) =>{
     try {
         await utapi.deleteFiles(imageKey)

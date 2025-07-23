@@ -130,8 +130,8 @@ export const mImages = pgTable('mImages',{
   id:serial('id').primaryKey(),
   merchantId:integer('merchant_id').references(() =>merchantSchema.id,{onDelete:'cascade'})
              .notNull(),
-  updated:timestamp("created").defaultNow(),
   name: text("name").notNull(),
+  key:text("key").notNull(),
   imageUrl:text('image_url').notNull(),
 })
 
@@ -180,3 +180,11 @@ export const tagsAndMerchantRelations = relations(tagsTo,({one}) =>({
       references:[merchantTags.id]
       }),
 }))
+
+//This is Event Part
+//Event
+//Relations between event and user
+//Relations between event and tags
+//Relations between event and images
+//Event tags
+//Event Images

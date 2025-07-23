@@ -60,7 +60,7 @@ export const newVerification = async (token: string) =>{
   return {success:"Email verified successfully!"}
 }
 
-//这个是用来验证是不是你本人发出的token,以及是否是数据库自己产生的token而不是黑客产生的token
+//这个是用来验证是不是你本人发出的token,以及是否是数据库自己产生的token
 export const getPasswordResetTokenByToken = async (token: string) =>{
   try {
     const passwordResetToken = await db.query.passwordResetTokens.findFirst({
@@ -98,7 +98,7 @@ export const getTwoFactorTokenByEmail = async (email:string) =>{
   }
 }
 
-//这个是用来验证是不是你本人发出的token,以及是否是数据库自己产生的token而不是黑客产生的token
+//这个是用来验证是不是你本人发出的token,以及是否是数据库自己产生的token
 //通常是通过检测sendEmail twofactor function发送的 token是否在数据库中存在。
 export const getTwoFactorTokenByToken = async (token: string) =>{
   try {

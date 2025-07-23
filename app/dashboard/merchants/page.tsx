@@ -7,7 +7,7 @@ import { DataTable } from "./data-table"
 import { columns } from "./columns"
 
 export default async function merchants() {
-  //check if user login then show the settings page
+  //check if user has login then show the settings page
   const session = await auth()
   if(session?.user.role === "user"){
     return { error: "You don't have permission to access this page!" };

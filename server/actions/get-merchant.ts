@@ -8,7 +8,15 @@ import { merchantSchema } from "../schema"
 export async function getMerchant(id:number) {
     try {
        const merchant = await db.query.merchantSchema.findFirst({
-            where:eq(merchantSchema.id,id)
+            where:eq(merchantSchema.id,id),
+            with:{
+              merchantTags:{
+                with:{
+                  tags:true,
+                }
+              },
+              imageUrl: true,
+            }
        }) 
        if(!merchant){
         throw new Error("Merchant Not Found")

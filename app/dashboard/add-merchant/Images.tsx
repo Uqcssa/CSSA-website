@@ -23,8 +23,12 @@ import { Reorder } from "framer-motion"
 import { useEffect, useState } from "react"
 import { deleteImage } from "@/server/actions/editImageMode"
 import { useToast } from "@chakra-ui/react"
+import { checkImageList } from "@/server/actions/check-imageUrlList"
 
-export default function MerchantImages() {
+interface MerchantImagesProps {
+    id?: number;
+}
+export default function MerchantImages({id} : MerchantImagesProps) {
     const {getValues, control, setError} = useFormContext<z.infer<typeof MerchantSchema>>()
     const{fields,remove, append, update, move} = useFieldArray({
         control,
@@ -49,9 +53,31 @@ export default function MerchantImages() {
         console.log(fields)
     }
 
+   
+    // Fetch existing images if id is provided
     useEffect(() => {
-        console.log('Fields updated:', fields);  // 当 fields 变化时打印其状态
-    }, [fields]);
+        if (id) {
+            checkImageList(id).then(images => {
+                if (images) {
+                    // Append each existing image to the fields array
+                    images.forEach((img: any) => {
+                        append({
+                            name: img.name,
+                            size: 0, // If you have the size, use it; otherwise, default to 0
+                            url: img.imageUrl,
+                            key: img.key,
+                        })
+                    })
+                }
+            }).catch(err => {
+                console.error("Error fetching images:", err)
+            })
+        }
+    }, [id, append])
+
+    // useEffect(() => {
+    //     console.log('Fields updated:', fields);  // 当 fields 变化时打印其状态
+    // }, [fields]);
     
     
     return(
@@ -59,6 +85,7 @@ export default function MerchantImages() {
             <FormField
                 control={control}
                 name="images"
+                //this part used to display the image that uploaded before
                 render={({ field }) => (
                     <FormItem className="py-2">
                         <FormLabel className="font-bold">
@@ -168,7 +195,7 @@ export default function MerchantImages() {
                                 </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between items-center p-2">
-                                    <div className="flex-col items-center gap-6">
+                                    <div className="flex-col items-center gap-6 overflow-hidden">
                                         <p className="font-sm">{field.name}</p> 
                                      
                                         <p className="font-sm mt-1">{(field.size/(1024*1024)).toFixed(2)}MB</p>

@@ -13,8 +13,8 @@ export const MerchantSchema = z.object({
         message:"Name must be at least 3 characters long",
     }),
     // image: z.string(),
-    description:z.string().min(25,{
-        message:"Description must be at least 25 characters long",
+    description:z.string().min(15,{
+        message:"Description must be at least 15 characters long",
     }),
     discountInformation:z.string().min(3,{
         message:"Discount information must be at least 4 characters long",

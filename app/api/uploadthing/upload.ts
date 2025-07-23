@@ -1,4 +1,4 @@
-import { generateReactHelpers } from "@uploadthing/react/hooks"
+
 import {
   generateUploadButton,
   generateUploadDropzone,

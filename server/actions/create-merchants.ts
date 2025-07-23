@@ -7,12 +7,14 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
 import { handleTags } from "./handleTags";
+import { handleImages } from "./handleImages";
 
 const action = createSafeActionClient();
 
 export const createMerchant = action(
     MerchantSchema,
     async({title, description, discountInformation, address, id, merchant_type, images}) =>{
+        
         //check Authentication:
         const user = await auth()
         
@@ -71,7 +73,7 @@ export const createMerchant = action(
                 .insert(merchantSchema)
                 .values({title, description, discountInformation, address,userId:dbUser.id})
                 .returning()// returning() is very important 
-
+                
                 // insert the new tags to the table 
                 const merchantId = newMerchant[0].id
                 if(merchant_type && merchant_type.length > 0){
@@ -83,6 +85,23 @@ export const createMerchant = action(
                     };
                     }
                 }
+                //insert the new image array to the table
+            
+                
+                console.log("Merchant ID:", merchantId);
+                console.log("Images to insert:", images);
+
+                // 确认 images 存在并非空数组
+                if (images && images.length > 0) {
+                    const imageResult = await handleImages(images, merchantId);
+                    if (imageResult.error) {
+                        return {
+                            error: imageResult.debugInfo,
+                            debugInfo: imageResult.debugInfo,
+                        };
+                    }
+                }
+               
 
                 revalidatePath("/dashboard/merchants")
                 return{
@@ -90,7 +109,7 @@ export const createMerchant = action(
                     message1: 'Merchant created',
                     message2: 'Merchant information registered successfully',
                     message3: 'Merchant Creating',
-                    debugInfo: merchant_type,
+                    debugInfo: images,
                 }}
             }
         } catch (error) {
