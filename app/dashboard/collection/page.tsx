@@ -25,7 +25,8 @@ interface CollectionItem {
 export default function CollectionPage() {
   const [collections, setCollections] = useState<CollectionItem[]>([])
   const [loading, setLoading] = useState(true)
-
+  
+//fix
   useEffect(() => {
     // 模拟加载收藏数据
     const mockCollections: CollectionItem[] = [
