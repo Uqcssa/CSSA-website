@@ -3,41 +3,30 @@
 import { UploadDropzone } from "@/app/api/uploadthing/upload"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { MerchantSchema } from "@/types/merchant-schema"
-import { error } from "console"
 import { useFieldArray, useFormContext } from "react-hook-form"
 import * as z from "zod"
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "@/components/ui/table"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { X } from "lucide-react"
-import { Reorder } from "framer-motion"
-import { useEffect, useState } from "react"
 import { deleteImage } from "@/server/actions/editImageMode"
 import { useToast } from "@chakra-ui/react"
-import { checkImageList } from "@/server/actions/check-imageUrlList"
 
 interface MerchantImagesProps {
     id?: number;
 }
 export default function MerchantImages({id} : MerchantImagesProps) {
     const {getValues, control, setError} = useFormContext<z.infer<typeof MerchantSchema>>()
-    const{fields,remove, append, update, move} = useFieldArray({
+    const{fields, remove, append, update} = useFieldArray({
         control,
         name:'images'
     })
 
-    const toast = useToast() //toast style
-    //this is remove image from the server function
+    const toast = useToast()
+    const [initialized, setInitialized] = useState(false)
     
+    //this is remove image from the server function
     const handleRemove = async (index: number,imageKey: string) =>{
         const res = await deleteImage(imageKey);
         if(res.success){
@@ -52,33 +41,17 @@ export default function MerchantImages({id} : MerchantImagesProps) {
         }
         console.log(fields)
     }
-
-   
-    // Fetch existing images if id is provided
-    useEffect(() => {
-        if (id) {
-            checkImageList(id).then(images => {
-                if (images) {
-                    // Append each existing image to the fields array
-                    images.forEach((img: any) => {
-                        append({
-                            name: img.name,
-                            size: 0, // If you have the size, use it; otherwise, default to 0
-                            url: img.imageUrl,
-                            key: img.key,
-                        })
-                    })
-                }
-            }).catch(err => {
-                console.error("Error fetching images:", err)
-            })
-        }
-    }, [id, append])
-
-    // useEffect(() => {
-    //     console.log('Fields updated:', fields);  // 当 fields 变化时打印其状态
-    // }, [fields]);
     
+    // Fetch existing images if id is provided - 只在初始化时执行一次
+    useEffect(() => {
+        if (id && !initialized) {
+            // 在编辑模式下，只设置初始化状态，不加载已存在的图片
+            setInitialized(true)
+        } else if (!id) {
+            // 如果没有 id（新建模式），直接标记为已初始化
+            setInitialized(true)
+        }
+    }, [id, append, initialized])
     
     return(
         <div>
@@ -128,7 +101,7 @@ export default function MerchantImages({id} : MerchantImagesProps) {
                                         });
                                         return [];
                                     }
-                                    files.map((file) => 
+                                    files.forEach((file) => 
                                         append({
                                             name:file.name,
                                             size:file.size,
@@ -140,7 +113,7 @@ export default function MerchantImages({id} : MerchantImagesProps) {
                                 //after image upload then
                                 onClientUploadComplete={(files) =>{
                                     const mImages = getValues('images')
-                                    mImages.map((field,mindex) => {
+                                    mImages.forEach((field, mindex) => {
                                         if(field.url.search("blob:") === 0){
                                             const image = files.find((im) => im.name === field.name)
                                             if(image){
@@ -152,7 +125,6 @@ export default function MerchantImages({id} : MerchantImagesProps) {
                                                 })
                                             }
                                         }
-                                      
                                     })
                                     return
                                 }}
@@ -164,91 +136,66 @@ export default function MerchantImages({id} : MerchantImagesProps) {
                     </FormItem>
                 )}
             />
-            <div className="container mx-auto py-10">
-                <div
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                >
-                    {fields.map((field, index) =>{
-                        return(
-                            <Card 
-                                className={
-                                    (cn(field.url.search('blob') === 0
-                                        ? "animate-pluse transition-all" 
-                                        : ""
-                                    ),
-                                    "overflow-hidden text-sm font-bold text-gray-500 hover:text-blue-500"
-                                    )
-                                }
-                                key={field.url}
-                            >
-                                <CardContent className="p-0"
-                               
+            
+            {/* 只在创建新 merchant 时显示当前上传的图片 */}
+            {!id && fields.length > 0 && (
+                <div className="container mx-auto py-10">
+                    <div
+                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                    >
+                        {fields.map((field, index) =>{
+                            return(
+                                <Card 
+                                    className={
+                                        (cn(field.url.search('blob') === 0
+                                            ? "animate-pluse transition-all" 
+                                            : ""
+                                        ),
+                                        "overflow-hidden text-sm font-bold text-gray-500 hover:text-blue-500"
+                                        )
+                                    }
+                                    key={field.url}
                                 >
-                                <div className="relative aspect-square">
-                                    <Image
-                                    src={field.url}
-                                    alt={field.name}
-                                    layout="fill"
-                                    objectFit="cover"
-                                    />
-                                    
-                                </div>
-                                </CardContent>
-                                <CardFooter className="flex justify-between items-center p-2">
-                                    <div className="flex-col items-center gap-6 overflow-hidden">
-                                        <p className="font-sm">{field.name}</p> 
-                                     
-                                        <p className="font-sm mt-1">{(field.size/(1024*1024)).toFixed(2)}MB</p>
-                                    </div>
-                                    
-                                    <button
-                                        className="hover:bg-destructive hover:text-destructive-foreground"
-                                        onClick={(e) => {
-                                            e.preventDefault()
+                                    <CardContent className="p-0">
+                                    <div className="relative aspect-square">
+                                        <Image
+                                        src={field.url}
+                                        alt={field.name}
+                                        layout="fill"
+                                        objectFit="cover"
+                                        />
                                         
-                                            if (field?.key){
-                                                handleRemove(index, field.key);  // Only call if key is not undefined
-                                            }
+                                    </div>
+                                    </CardContent>
+                                    <CardFooter className="flex justify-between items-center p-2">
+                                        <div className="flex-col items-center gap-6 overflow-hidden">
+                                            <p className="font-sm">{field.name}</p> 
+                                         
+                                            <p className="font-sm mt-1">{(field.size/(1024*1024)).toFixed(2)}MB</p>
+                                        </div>
+                                        
+                                        <button
+                                            className="hover:bg-destructive hover:text-destructive-foreground"
+                                            onClick={(e) => {
+                                                e.preventDefault()
                                             
-                                        }}
-                                    >
-                                        {/* const promises =[];
-                                        for (let i = 0; i < files.length; i++) {
-                                            promises.push(storeImage(files[i]));    
-                                        } */}
-                                        <X className="h-4 w-4" />
-                                        <span className="sr-only">Remove {field.name}</span>
-                                    </button>
-                                </CardFooter>
-                            </Card>
-                        )
-                    })}
-                  
+                                                if (field?.key){
+                                                    handleRemove(index, field.key);  // Only call if key is not undefined
+                                                }
+                                                
+                                            }}
+                                        >
+                                            <X className="h-4 w-4" />
+                                            <span className="sr-only">Remove {field.name}</span>
+                                        </button>
+                                    </CardFooter>
+                                </Card>
+                            )
+                        })}
+                      
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     )
 }
-{/* <Card key={field?.id} 
-                                                className="overflow-hidden"
-                                            >       
-                                                    <CardContent className="p-0">
-                                                    <div className="relative aspect-square">
-                                                        <Image
-                                                        src={field.url}
-                                                        alt={field.name}
-                                                        layout="fill"
-                                                        objectFit="cover"
-                                                        />
-                                                    </div>
-                                                    </CardContent>
-                                                    <CardFooter className="flex justify-between items-center p-2">
-                                                    <span className="font-medium">{field.name}</span>
-                                                    <button
-                                                        className="hover:bg-destructive hover:text-destructive-foreground"
-                                                    >
-                                                        <X className="h-4 w-4" />
-                                                        <span className="sr-only">Remove {field.name}</span>
-                                                    </button>
-                                                    </CardFooter>
-                                            </Card> */}

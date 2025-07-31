@@ -43,7 +43,10 @@ const action = createSafeActionClient();
 // remove images from the database 
 export const deleteImage = async (imageKey: string) =>{
     try {
+        // 1. 删除 UploadThing 存储中的文件
         await utapi.deleteFiles(imageKey)
+        // 2. 删除数据库中的图片记录
+        await db.delete(mImages).where(eq(mImages.key, imageKey))
         return { success: `Image has been deleted` }
     } catch (error) {
         return { error: "Failed to delete Image" }
