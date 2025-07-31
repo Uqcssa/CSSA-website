@@ -114,9 +114,10 @@ export const merchantSchema = pgTable('merchants',{
 
 )
 
-//define the user and merchantSchema relation
+//define the user and merchantSchema,eventSchema relation
 export const userMerchantRelation = relations(users,({many})=>({
-  merchant:many(merchantSchema)
+  merchant:many(merchantSchema),
+  events:many(eventSchema)
 }))
 
 export const merchantRelations = relations(merchantSchema,({one,many}) =>({
@@ -182,6 +183,91 @@ export const tagsAndMerchantRelations = relations(tagsTo,({one}) =>({
 }))
 
 //This is Event Part
+//event schema
+export const eventSchema =pgTable('events',{
+  id:serial('id').primaryKey(),
+  userId:text('user_id').references(() => users.id, {onDelete:'cascade'})
+  .notNull(),
+  title:text('title').notNull(),
+  description:text('description').notNull(),
+  address:text('address').notNull(),
+  date:timestamp('date').notNull(),
+  time:text('time').notNull(),
+  created:timestamp('created').defaultNow(),
+  status:varchar('status',{length:20}).default('active'),//active canceled , expired
+  maxParticipants:integer('max_participants'),
+  currentParticipants: integer('current_participants').default(0),
+  price: real('price').default(0),
+  organizer: text("organizer").notNull(),
+  contactInfo: text("contact_info"),
+}
+)
+// Event Images table
+export const eImage = pgTable('eImages',{
+  id:serial('id').primaryKey(),
+  eventId:integer('event_id').references(() => eventSchema.id,{onDelete:'cascade'})
+  .notNull(),
+  name:text('name').notNull(),
+  key:text('key').notNull(),
+  imageUrl:text('image_url').notNull(),
+}
+)
+// Event Tags table
+export const eventTags = pgTable('eventTags', {
+  id: integer("id").primaryKey(),
+  tags: varchar('tags', { length: 255 }).notNull(),
+})
+
+//eventScheman and eventTags relation third table
+export const eventTagsTo =pgTable('eventTagsTo',
+  {
+    eventId:integer('event_id')
+      .notNull()
+      .references(() => eventSchema.id,{onDelete:'cascade'}),
+    eventTagsId:integer('eventTags_id')
+      .notNull()
+      .references(() => eventTags.id,{onDelete:'cascade'}),
+  },
+  (t) =>({
+    pk: primaryKey({columns: [t.eventId, t.eventTagsId]})
+  }),
+)
+
+//relations between eventTagsTo and eventScheman, eventTags
+export const eventTagsTorelation = relations(eventTagsTo,({one}) => ({
+  eventId:one(eventSchema,{
+    fields:[eventTagsTo.eventId], 
+    references:[eventSchema.id]
+  }),
+  eventTagsId:one(eventTags,{
+    fields:[eventTagsTo.eventTagsId],
+    references:[eventTags.id]
+  })
+}))
+
+
+//Relations between event and user,eImages,tags
+
+export const eventUserRelation = relations(eventSchema,({one,many}) =>({
+  userId:one(users,{fields:[eventSchema.userId],references:[users.id]}),
+  eImages:many(eImage),
+  eventTagsTo:many(eventTagsTo),
+}))
+
+//Relations between eventags and eventtagsTo
+export const eventTagsRelation = relations(eventTags,({many}) => ({
+  eventId:many(eventTagsTo),
+}))
+
+
+
+//Relations between eImages and event
+export const eImagesRelation = relations(eImage,({one}) => ({
+  eventId:one(eventSchema,{fields:[eImage.eventId], references:[eventSchema.id]}),
+}))
+
+
+//Event eImages relation table
 //Event
 //Relations between event and user
 //Relations between event and tags
