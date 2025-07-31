@@ -27,11 +27,9 @@ import { Input } from "@/components/ui/input"
 import {useAction} from 'next-safe-action/hooks'
 import Tiptap from "./tiptap"
 import { createMerchant } from "@/server/actions/create-merchants"
-import { error } from "console"
+
 import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from '@chakra-ui/react'
-import { date } from "drizzle-orm/pg-core"
-import { getMerchant, getTags } from "@/server/actions/get-merchant"
 import React, { useEffect, useState } from "react"
 import { Select, 
          SelectContent, 
@@ -44,7 +42,6 @@ import { Select,
 import { CupSoda, HandPlatter, UtensilsCrossed, X } from "lucide-react"
 import { MerchantTypeMap } from "./selectOptions"
 import MerchantImages from "./Images"
-import { checkImageList } from "@/server/actions/check-imageUrlList"
 
 
 
@@ -52,22 +49,11 @@ import { checkImageList } from "@/server/actions/check-imageUrlList"
 export default function MerchantForm(){
      //create the unique function to check the product exist or not
     const searchParams = useSearchParams()
-    const editMode = searchParams.get("id")
-    const exData = editMode ? checkImageList(parseInt(editMode)) : null;
     
     //check the input is valid?
     const form = useForm<z.infer<typeof MerchantSchema>>({
         resolver: zodResolver(MerchantSchema),
-        defaultValues: editMode && exData
-        ? {
-              title: '',
-              description: '',
-              discountInformation: '',
-              address: '',
-              merchant_type: [],
-              images:  exData || [], // 后端返回的图片
-          }
-        : {
+        defaultValues: {
               title: '',
               description: '',
               discountInformation: '',
@@ -82,38 +68,14 @@ export default function MerchantForm(){
     const router = useRouter();// redirect user to the merchants page after create merchant
     const toast = useToast() //toast style
     
-    //create the unique function to check the product exist or not
-    const checkMerchant = async (id: number) => {
-        if(editMode){
-            const data = await getMerchant(id)
-            const tags = await getTags(id)
-            if(data.error || tags.error){
-                toast({
-                    title: `${data?.error}`,
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                })
-                router.push('/dashboard/merchants')
-                return
-            }
-            if(data.success && tags.success){
-                const id = parseInt(editMode);
-                form.setValue("title",data.success.title)
-                form.setValue("address",data.success.address)
-                form.setValue("description",data.success.description)
-                form.setValue("discountInformation",data.success.discountInformation)
-                form.setValue("id",data.success.id)
-                const tagStrings = data.success.merchantTags.map((tag: any) => tag.tags.tags)
-                form.setValue("merchant_type", tagStrings as [string, ...string[]]);
-            }
-        }
-    }
     //this is the function used to control the select function
     const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
 
     const handleSelect = (value: string) => {
         if (!selectedItems.includes(value)) {
+            if(selectedItems.length >=3){
+                return;
+            }
             const updatedItems = [...selectedItems, value];
             console.log("Adding Selected Item:", value);
             setSelectedItems(updatedItems)
@@ -126,12 +88,6 @@ export default function MerchantForm(){
         setSelectedItems(updatedItems);
     }
 
-    //useEffect
-    useEffect(() =>{
-        if(editMode){
-            checkMerchant(parseInt(editMode))
-        }
-    },[])
     //select useEffect
     useEffect(() => {
         console.log("Selected Items:", selectedItems);
@@ -156,25 +112,14 @@ export default function MerchantForm(){
                 router.push("/dashboard/merchants")
                 toast({
                     title: `${data?.success.message1}`,
-                    description: `${data?.success.message2}`,
                     status: 'success',
                     duration: 9000,
                     isClosable: true,
                 })
-                console.log(data)
             }
-            
         },
-        // onExecute:(data)=>{
-        //     toast({
-        //         title: `${data?.success.message3}`,
-        //         description: "Please wait",
-        //         status: 'loading',
-        //         duration: 9000,
-        //         isClosable: true,
-        //     })
-        // },
         onError:(error) =>{
+            console.log("onError:", error);
             toast({
                 title: 'Unexpected error',
                 description: JSON.stringify(error),
@@ -184,30 +129,25 @@ export default function MerchantForm(){
             });
         }
     })
-    // function used for sumbitting  the information input from the user 
+
     async function onSubmit(values: z.infer<typeof MerchantSchema>){
         console.log("Form Values before submit:", values);
         execute(values);
     }
-    //test
-    console.log(form.formState.isValid)
-    console.log(form.formState.isDirty)
-    // console.log(form.watch())
+
     return(
-    <Card className="mx-9">
-        <CardHeader>
-            <CardTitle>
-                {editMode ? <span>Edit Merchant</span>: <span>Create Merchant</span>}
-            </CardTitle>
-            <CardDescription className="text-gray-500 py-1">
-                {editMode ? <span>Make changes to existing Merchant</span>
-                : 
-                <span>Sumbit your Merchant information</span>}
-            </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        <Card className="mx-9">
+            <CardHeader>
+                <CardTitle>
+                     <span>Create Merchant</span>
+                </CardTitle>
+                <CardDescription className="text-gray-500 py-1">
+                <span>Add a new Merchant to the database</span>
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <FormProvider {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                 <FormField
                 control={form.control}
                 name="title"
@@ -289,6 +229,7 @@ export default function MerchantForm(){
                                                 {selectedItems.map((item,index) => (
                                                     <button
                                                         key={index}
+                                                        type="button"  // 关键：防止触发表单提交
                                                         className="flex items-center px-3 py-1 text-sm font-medium
                                                                 rounded-full shadow-md transition-all duration-300 ease-in-out
                                                                 bg-gradient-to-r from-blue-400 to-blue-600 text-white
@@ -310,7 +251,7 @@ export default function MerchantForm(){
                     />
 
                 {/* shop's Images */}
-                <MerchantImages  id={editMode ? parseInt(editMode) : undefined} />
+                <MerchantImages  id={undefined} />
 
                 {/* shop's Description */}
                 <FormField

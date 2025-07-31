@@ -102,7 +102,7 @@ const ActionCell = ({row}: {row:Row<MerchantsColumn>}) =>{
                 <DropdownMenuContent className="bg-white h-full">
                     <DropdownMenuItem className="text-sm p-1">
                         {/* this is how to pass id to the server, backend*/}
-                        <Link className="w-full cursor-pointer hover:bg-gray-100" href={`/dashboard/add-merchant?id=${merchant.id}`}>
+                        <Link className="w-full cursor-pointer hover:bg-gray-100" href={`/dashboard/edit-merchant?id=${merchant.id}`}>
                             Edit Merchant
                         </Link>
                     </DropdownMenuItem>

@@ -1,5 +1,5 @@
 import { auth } from "@/server/auth"
-import { Settings, Truck, BarChart, PenSquare, Package, CalendarArrowUp, CalendarHeart, Store } from "lucide-react"
+import { Settings, Truck, BarChart, PenSquare, Package, CalendarArrowUp, CalendarHeart, Store, Bookmark } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
@@ -63,6 +63,12 @@ export default async function DashboardLayout({
                     label: "Events",
                     path: "/dashboard/events",
                     icon: <CalendarHeart size={20} />,
+                  },
+                  //  我的收藏
+                  {
+                    label: "My Collection",
+                    path: "/dashboard/collection",
+                    icon: <Bookmark size={20} />,
                   },
              ]
             : []
