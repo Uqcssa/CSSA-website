@@ -308,6 +308,21 @@ export default function EventForm() {
                         </FormItem>
                     )}
                     />
+                    {/* Event contact information */}
+                    <FormField
+                    control={form.control}
+                    name="contactInfo"
+                    render={({ field }) => (
+                        <FormItem className="py-2">
+                            <FormLabel className="font-bold">Contact Information</FormLabel>
+                            <FormControl>
+                                <Input placeholder="weChat Group number" {...field} />
+                            </FormControl>
+                            
+                            <FormMessage className="text-red-600"/>
+                        </FormItem>
+                    )}
+                    />
 
                     {/* Event's Status */}
                     <FormField
