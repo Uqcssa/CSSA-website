@@ -225,6 +225,20 @@
       "when": 1728583519478,
       "tag": "0031_organic_morgan_stark",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1754034330310,
+      "tag": "0032_smart_crystal",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1754374459905,
+      "tag": "0033_illegal_frightful_four",
+      "breakpoints": true
     }
   ]
 }

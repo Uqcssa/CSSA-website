@@ -16,6 +16,7 @@ import { useToast } from "@chakra-ui/react"
 interface MerchantImagesProps {
     id?: number;
 }
+
 export default function MerchantImages({id} : MerchantImagesProps) {
     const {getValues, control, setError} = useFormContext<z.infer<typeof MerchantSchema>>()
     const{fields, remove, append, update} = useFieldArray({

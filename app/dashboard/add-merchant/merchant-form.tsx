@@ -246,9 +246,9 @@ export default function MerchantForm(){
                                     </div>
                                         
                                     <FormMessage className="text-red-600" />
-                                </FormItem>
-                            )}
-                    />
+                        </FormItem>
+                        )}
+                />
 
                 {/* shop's Images */}
                 <MerchantImages  id={undefined} />

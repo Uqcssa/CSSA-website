@@ -9,14 +9,15 @@ export async function handleImages(images: {url:string, name: string,key: string
     try {
       // 遍历images数组，构建插入数据，包含图片和name以及url
       const imageInserts = images.map((image) => ({
+        
         merchantId,
         imageUrl: image.url,
         name: image.name,
         key: image.key,
       }));
-      console.log(imageInserts)
+      // console.log(imageInserts)
       // 将数据插入到mImages表
-      await db.insert(mImages).values(imageInserts);
+      await db.insert(mImages).values(imageInserts).returning();
   
       return {
         success: true,

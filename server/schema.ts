@@ -159,9 +159,6 @@ export const tagsTo = pgTable('tagsToMerchant',
                  .notNull()
                  .references(() => merchantTags.id,{onDelete:'cascade'}),
   },
-  (t) =>({
-    pk: primaryKey({ columns: [t.merchantId, t.merchantTagsId] }),
-  }),
           
 )
 
@@ -218,8 +215,22 @@ export const eventTags = pgTable('eventTags', {
   tags: varchar('tags', { length: 255 }).notNull(),
 })
 
+// //eventScheman and eventTags relation third table
+// export const eventTagsTo = pgTable('eventTagsTo',
+//   {
+//     eventId:integer('event_id')
+//       .notNull()
+//       .references(() => eventSchema.id,{onDelete:'cascade'}),
+//     eventTagsId:integer('eventTags_id')
+//       .notNull()
+//       .references(() => eventTags.id,{onDelete:'cascade'}),
+//   },
+//   (t) =>({
+//     pk: primaryKey({columns: [t.eventId, t.eventTagsId]})
+//   }),
+// )
 //eventScheman and eventTags relation third table
-export const eventTagsTo =pgTable('eventTagsTo',
+export const eventTagsTo = pgTable('eventTagsTo',
   {
     eventId:integer('event_id')
       .notNull()
@@ -227,10 +238,7 @@ export const eventTagsTo =pgTable('eventTagsTo',
     eventTagsId:integer('eventTags_id')
       .notNull()
       .references(() => eventTags.id,{onDelete:'cascade'}),
-  },
-  (t) =>({
-    pk: primaryKey({columns: [t.eventId, t.eventTagsId]})
-  }),
+  }
 )
 
 //relations between eventTagsTo and eventScheman, eventTags
