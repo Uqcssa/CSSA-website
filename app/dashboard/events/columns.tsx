@@ -31,7 +31,7 @@ import {
 import { useState } from "react"
 import Link from "next/link"
 import { deleteEvent } from "@/server/actions/delete-events"
-
+import { format } from "date-fns";
 
 
 type EventsColumn ={
@@ -167,6 +167,10 @@ export const columns: ColumnDef<EventsColumn>[] = [
     {
         accessorKey: "date",
         header:"Date",
+        cell: ({ row }) => {
+            const date = row.getValue("date") as Date;
+            return date ? format(date, 'MMM dd, yyyy') : '';
+        }
     },
     {
         accessorKey: "time",
@@ -181,7 +185,7 @@ export const columns: ColumnDef<EventsColumn>[] = [
         header:"Event Type",
          //change tags style
         cell:({row}) =>{
-            const cellTags = row.getValue("eventtags") as string || []
+            const cellTags = row.getValue("eventTags") as string || []
             return(
                 <div className="flex flex-wrap gap-2 ">
                     {cellTags && (

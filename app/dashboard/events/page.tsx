@@ -20,11 +20,15 @@ export default async function events() {
   const events = await db.query.eventSchema.findMany({
     orderBy:(eventSchema,{desc}) => [desc(eventSchema.id)],
     with:{
-      eventTagsTo:{
-        with:{
-          eventTagsId:true
+        eventTagsTo: {
+            with: {
+              eventTagsId: {
+                columns: {
+                  tags: true  // 获取标签名称
+                }
+              }
+            }
         }
-      }
     }
   })
   if(!events) throw new Error("event Not Found!")
