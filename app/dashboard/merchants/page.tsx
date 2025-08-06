@@ -5,14 +5,34 @@ import { redirect } from "next/navigation"
 import placeholder from "@/public/placeholder_small.jpg"
 import { DataTable } from "./data-table"
 import { columns } from "./columns"
+import { eq } from "drizzle-orm"
 
 export default async function merchants() {
   //check if user has login then show the settings page
   const session = await auth()
+  if(!session){
+    return {error: "User not found"}
+  }
+  
   if(session?.user.role === "user"){
     return { error: "You don't have permission to access this page!" };
   }
-  const merchants = await db.query.merchantSchema.findMany({
+
+    // Admin 可以看到所有 merchants
+   const  merchants = session?.user.role === "admin"
+    ? await db.query.merchantSchema.findMany({
+      orderBy: (merchantSchema, { desc }) => [desc(merchantSchema.id)],
+      with: {
+        merchantTags: {
+          with: {
+            tags: true
+          }
+        }
+      }
+    })
+
+    : await db.query.merchantSchema.findMany({
+    where: eq(merchantSchema.userId, session?.user.id),
     orderBy:(merchantSchema,{desc}) => [desc(merchantSchema.id)],
     with:{
       merchantTags:{
@@ -22,6 +42,7 @@ export default async function merchants() {
       }
     }
   })
+
   if(!merchants) throw new Error("Merchant Not Found!")
   const dataTable = merchants.map((merchant) =>{
     const tags = merchant.merchantTags.map((tagRelation) => tagRelation.tags.tags) 
