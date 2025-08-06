@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { eventSchema, users } from "../schema";
 import { handleEventTags } from "./handleEventTags";
 import { revalidatePath } from "next/cache";
+import { uploadEImages } from "./uploadEImages";
 
 const action = createSafeActionClient();
 
@@ -40,21 +41,43 @@ export const createEvent = action(
             if(!id){
                 const newEvent = await db
                 .insert(eventSchema)
-                .values({title,description, address, date, time, maxParticipants, price, organizer, contactInfo, status, userId:dbUser.id})
-                .returning()
+                .values({
+                    title,
+                    description, 
+                    address, 
+                    date: new Date(date), //the date is timestamp type but here is string so we need to transfer it to timestamp type for storing in database for storing in database properly
+                    time, 
+                    maxParticipants, 
+                    price, 
+                    organizer, 
+                    contactInfo, 
+                    status, 
+                    userId: dbUser.id
+                })
+                .returning()// return the id of the event
 
-                const eventId = newEvent[0].id // 你使用了 .returning()，它会返回一个 数组，即使你只插入了一条数据。所以 newMerchant 的类型是string[], 所以需要取第一个元素
+                //event tags part
+                const eventId = newEvent[0].id
                 if(eventTags && eventTags.length > 0){
-                    const eventTagsresult = await handleEventTags(eventId, eventTags)
+                    const eventTagsresult = await handleEventTags(eventId, eventTags[0])
                     if (eventTagsresult.error) {
                         return {
-                            error: "Error creating merchant tags",
+                            error: "Error creating event tags",
                             debugInfo: eventTagsresult,
                         };
                     }
                 }
 
                 //images part
+                if(images && images.length > 0){
+                    const imageResult = await uploadEImages(images, eventId)
+                    if(imageResult.error){
+                        return {
+                            error: imageResult.debugInfo,
+                            debugInfo: imageResult.debugInfo,
+                        };
+                    }
+                }
 
                 revalidatePath("/dashboard/add-events")
                 return{

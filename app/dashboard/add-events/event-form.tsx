@@ -2,7 +2,7 @@
 
 import { EventSchema } from "@/types/event-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams ,useRouter} from "next/navigation"
 import { FormProvider, useForm } from "react-hook-form"
 import {
     Card,
@@ -42,10 +42,19 @@ import { useState } from "react"
 import { format } from "date-fns"
 import Tiptap from "../add-merchant/tiptap"
 
+import { useToast } from '@chakra-ui/react'
+import { createEvent } from "@/server/actions/create-events"
+import MerchantImages from "../add-merchant/Images"
+
 export default function EventForm() {
     const searchParams = useSearchParams()
     const [date, setDate] = useState<Date | undefined>(undefined)
+    const [time, setTime] = useState<string>("")
     const [open, setOpen] = useState(false)
+
+    const router = useRouter();// redirect user to the merchants page after create merchant
+    const toast = useToast() //toast style
+    
 
     const form = useForm<z.infer<typeof EventSchema>>({
         resolver: zodResolver(EventSchema),
@@ -80,24 +89,76 @@ export default function EventForm() {
     const handleRemove = (value:string) =>{
         const currentTags = form.getValues("eventTags") || []
         const updateTags = currentTags.filter((tag: string) => tag !== value)
-        form.setValue("eventTags", updateTags as [string, ...string[]])
+        form.setValue("eventTags", updateTags) // the tag is only one so is not a string array 
     }
 
-    // handle event status 
-    const handleStatus = (value:string) =>{
-        const  currentStatus = form.getValues("status") || []
+   
 
-        if(currentStatus.includes(value)){
-            return
+    // handle time change
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
+        const value = e.target.value
+        setTime(value)
+        form.setValue("time", value)
+    }
+
+    // handle date selection
+    const handleDateSelect = (selectedDate: Date | undefined) => {
+        setDate(selectedDate)
+        setOpen(false)
+        if (selectedDate) {
+            form.setValue("date", format(selectedDate, "yyyy-MM-dd"))
         }
-        form.setValue("status",value as "active"  | "expired")
     }
 
-    
+    // handle event status
+    const handleStatus = (value:string) =>{
+        form.setValue("status", value as "active" | "expired")
+    }
 
-    async function onSubmit(values:z.infer<typeof EventSchema>){
-        console.log(values);
-    
+    const{execute, status} = useAction(createEvent,{
+        onSuccess:(data) =>{
+            if(data?.error){
+                toast({
+                    title:`${data.error}`,
+                    status:"error",
+                    duration:3000,
+                    isClosable:true,
+                })
+            }
+            if(data?.success){
+                router.push("/dashboard/events")
+                toast({
+                    title:`${data.success.message1}`,
+                    description:`${data.success.message2}`,
+                    status:"success",
+                    duration:9000,
+                    isClosable:true,
+                })
+            }
+        },
+        onError:(error) =>{
+            console.log("onError:", error);
+            toast({
+                title: 'Unexpected error',
+                description: JSON.stringify(error),
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    })
+
+    async function onSubmit(values: z.infer<typeof EventSchema>) {
+        console.log("Form values:", values);
+        
+        // 确保日期和时间都有值
+        if (!values.date || !values.time) {
+            console.error("Date and time are required");
+            return;
+        }
+        
+        // 调用 createEvent action
+        execute(values);
     }
 
     return(
@@ -195,6 +256,8 @@ export default function EventForm() {
                         </FormItem>
                     )}
                     />
+                    {/* shop's Images */}
+                    <MerchantImages  id={undefined} />
 
                     {/* Event's organizer */}
                     <FormField
@@ -238,7 +301,31 @@ export default function EventForm() {
                     )}
                     />
 
-                    {/* Event's date and time */}
+                    {/* Event's max participants */}
+                    <FormField
+                    control={form.control}
+                    name="maxParticipants"
+                    render={({ field }) => (
+                        <FormItem className="py-2">
+                            <FormLabel className="font-bold">Max Participants</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="number"
+                                    min="1"
+                                    placeholder="1"
+                                    {...field}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value) || 1;
+                                        field.onChange(value);
+                                    }}
+                                />
+                            </FormControl>
+                            <FormMessage className="text-red-600"/>
+                        </FormItem>
+                    )}
+                    />
+
+                    {/* Event's date */}
                     <FormField
                     control ={form.control}
                     name="date"
@@ -260,39 +347,63 @@ export default function EventForm() {
                                             id="date-picker"
                                             className="w-32 justify-between font-normal"
                                             >
-                                            {date ? date.toLocaleDateString() : "Select date"}
+                                            {date ? format(date, "dd/MM/yyyy") : "Select date"}
                                             <ChevronDownIcon />
                                             </Button>
                                         </PopoverTrigger>
-                                        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                                        <PopoverContent className="w-auto p-0" align="start">
                                             <Calendar
                                                 mode="single"
                                                 selected={date}
-                                                onSelect={setDate}
-                                                className="rounded-md border shadow-sm"
+                                                onSelect={handleDateSelect}
+                                                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                                                className="rounded-md border"
                                                 captionLayout="dropdown"
+                                                initialFocus
                                             />
                                         </PopoverContent>
                                         </Popover>
                                     </div>
                                     <div className="flex flex-col gap-3">
                                         <Label htmlFor="time-picker" className="px-1">
-                                        Time
+                                            Time
                                         </Label>
                                         <Input
-                                        type="time"
-                                        id="time-picker"
-                                        step="1"
-                                        defaultValue="00:00:00"
-                                        className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                            id="time-picker"
+                                            type="time"
+                                            value={time}
+                                            onChange={handleTimeChange}
+                                            className="w-32"
                                         />
                                     </div>
                                 </div>
                             </FormControl>
                         </FormItem>
-                        
                     )}
                     />
+
+                    {/* Event's time */}
+                    <FormField
+                    control={form.control}
+                    name="time"
+                    render={({ field }) => (
+                        <FormItem className="py-2">
+                            <FormLabel className="font-bold">Time</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="time"
+                                    {...field}
+                                    value={time}
+                                    onChange={handleTimeChange}
+                                />
+                            </FormControl>
+                            <FormMessage className="text-red-600"/>
+                        </FormItem>
+                    )}
+                    />
+
+
+
                     {/* Event's Description */}
                     <FormField
                     control={form.control}
@@ -301,7 +412,7 @@ export default function EventForm() {
                         <FormItem className="py-2">
                             <FormLabel className="font-bold">Description</FormLabel>
                             <FormControl>
-                                <Tiptap  val={field.value}/>
+                                <Tiptap val={field.value} />
                             </FormControl>
                             
                             <FormMessage className="text-red-600"/>
@@ -352,7 +463,15 @@ export default function EventForm() {
                         </FormItem>
                     )}
                     />
-
+                    <button className="shadow-[0_4px_14px_0_rgb(0,118,255,39%)] 
+                        hover:shadow-[0_6px_20px_rgba(0,118,255,23%)] hover:bg-[rgba(0,118,255,0.9)] 
+                        px-6 py-2 bg-[#0070f3] rounded-md text-white font-bold text-sm  transition 
+                        duration-200 ease-linear"
+                        type="submit"
+                        disabled={status === 'executing' || !form.formState.isValid || !form.formState.isDirty}
+                        >
+                           Submit
+                    </button>
                     </form>
                 </FormProvider>
             </CardContent>
