@@ -31,7 +31,7 @@ export const EventSchema = z.object({
     status: z.enum(["active", "expired"]).default("active"),
     eventTags: z.array(z.string()).max(1, {
         message: "You can only select one event type"
-    }).optional(),
+    }),
     images: z.array(Images).max(10, {
         message: "You can only upload up to 10 images."
     }).optional(),
