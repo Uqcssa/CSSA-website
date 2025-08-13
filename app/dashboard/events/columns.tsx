@@ -107,7 +107,7 @@ const ActionCell = ({row}: {row:Row<EventsColumn>}) =>{
                 <DropdownMenuContent className="bg-white h-full">
                     <DropdownMenuItem className="text-sm p-1">
                         {/* this is how to pass id to the server, backend*/}
-                        <Link className="w-full cursor-pointer hover:bg-gray-100" href={`/dashboard/edit-merchant?id=${event.id}`}>
+                        <Link className="w-full cursor-pointer hover:bg-gray-100" href={`/dashboard/edit-event?id=${event.id}`}>
                             Edit Event
                         </Link>
                     </DropdownMenuItem>
@@ -118,7 +118,7 @@ const ActionCell = ({row}: {row:Row<EventsColumn>}) =>{
                         </AlertDialogTrigger>
                         <AlertDialogContent className="bg-white">
                             <AlertDialogHeader>
-                            <AlertDialogTitle>Do you want delete Merchant?</AlertDialogTitle>
+                            <AlertDialogTitle>Do you want delete Event?</AlertDialogTitle>
                             <AlertDialogDescription className="text-gray-500">
                                 This action cannot be undone. This will permanently delete your
                                 Event and remove your data from our servers.

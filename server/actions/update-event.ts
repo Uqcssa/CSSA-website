@@ -38,12 +38,17 @@ export const updateEvent = action(
                 }
 
                 //update event
+                // 修复：将日期字符串转换为 Date 对象
+                const dateObject = new Date(date)
+                if (isNaN(dateObject.getTime())) {
+                    return {error: "Invalid date format"}
+                }
 
                 await db.update(eventSchema).set({
                     title,
                     description,
                     address,
-                    date,
+                    date:dateObject,
                     time,
                     maxParticipants,
                     price,
@@ -52,11 +57,29 @@ export const updateEvent = action(
                     status,
                 }).where(eq(eventSchema.id,id)).returning()
 
-                //update tags
+               
+
                 await db.delete(eventTagsTo).where(eq(eventTagsTo.eventId,id))
+                
+
                 if(eventTags && eventTags.length > 0){
-                    await handleEventTags(eventTags,id)
+                
+                    try {
+                        const tagResult = await handleEventTags(id, eventTags[0]);
+                       
+                        if(tagResult.error){
+                            return { error: `Failed to update tags: ${tagResult.error}` };
+                        }
+                       
+                    } catch (error) {
+                        console.error('Exception in handleEventTags:', error);
+                        return { error: `Exception updating tags: ${error}` };
+                    }
+                } else {
+                    console.log('No tags to insert - eventTags is empty or null');
                 }
+
+            
 
 
                 //update images
@@ -75,7 +98,7 @@ export const updateEvent = action(
                 revalidatePath("/dashboard/events");
                 return {
                 success: {
-                    message: 'Merchant information Updated successfully!',
+                    message: 'Event information Updated successfully!',
                 }};
             }
         } catch (error) {
