@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@/components/loading"
 import Image from "next/image"
 import placeholder from "@/public/placeholder_small.jpg"
 import { useState, useEffect } from "react"
-import { Calendar, MapPin, Tag, Users, Clock } from "lucide-react"
+import { MapPin, Tag, Users, Clock } from "lucide-react"
 import { getAllEvents } from "@/server/actions/get-all-events"
 import Link from "next/link"
 import { format } from "date-fns"
@@ -53,30 +53,13 @@ interface EventData {
   }>
 }
 
-// 定义事件标签分类
-const tagCategories = {
-  culture: {
-    name: "文化",
-    icon: Calendar,
-    tags: ["文化", "节日", "学术", "娱乐", "体育", "社交", "商业", "技术", "艺术", "教育"]
-  },
-  academic: {
-    name: "学术",
-    icon: Calendar,
-    tags: ["学术", "教育", "技术"]
-  },
-  entertainment: {
-    name: "娱乐",
-    icon: Calendar,
-    tags: ["娱乐", "体育", "社交", "艺术"]
-  }
-}
+
 
 export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
-  const [selectedCategory, setSelectedCategory] = useState("")
   const [selectedTag, setSelectedTag] = useState("")
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState("all") // 时间筛选状态
   const [loading, setLoading] = useState(true)
   
   // 分页状态
@@ -144,40 +127,79 @@ export default function EventsPage() {
     fetchEvents()
   }, [])
 
-  // 处理类别筛选
-  const handleCategoryFilter = (category: string) => {
-    setSelectedCategory(category)
-    setSelectedTag("")
-    setCurrentPage(1) // 重置到第一页
-    
-    if (category === "all") {
-      setFilteredEvents(events)
-    } else {
-      const categoryTags = tagCategories[category as keyof typeof tagCategories]?.tags || []
-      const filtered = events.filter(event => 
-        event.eventTags.some(tag => categoryTags.includes(tag))
-      )
-      setFilteredEvents(filtered)
-    }
-  }
+
 
   // 处理标签筛选
   const handleTagFilter = (tag: string) => {
     setSelectedTag(tag)
     setCurrentPage(1) // 重置到第一页
-    if (tag === "all") {
-      // 如果选择了 "all"，显示当前类别的所有事件
-      const categoryTags = tagCategories[selectedCategory as keyof typeof tagCategories]?.tags || []
-      const filtered = events.filter(event => 
-        event.eventTags.some(tag => categoryTags.includes(tag))
-      )
-      setFilteredEvents(filtered)
-    } else {
-      const filtered = events.filter(event => 
+    
+    let filtered = events
+    
+    // 应用标签筛选
+    if (tag !== "all") {
+      filtered = filtered.filter(event => 
         event.eventTags.includes(tag)
       )
-      setFilteredEvents(filtered)
     }
+    
+    // 应用时间筛选
+    if (selectedTimeFilter === "latest") {
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      
+      filtered = filtered
+        .filter(event => new Date(event.date) >= sixMonthsAgo)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    } else if (selectedTimeFilter === "past") {
+      const now = new Date()
+      filtered = filtered
+        .filter(event => new Date(event.date) < now)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    }
+    
+    console.log(`Tag filter: ${tag}, showing ${filtered.length} events`)
+    setFilteredEvents(filtered)
+  }
+
+  // 处理时间筛选
+  const handleTimeFilter = (timeFilter: string) => {
+    setSelectedTimeFilter(timeFilter)
+    setCurrentPage(1) // 重置到第一页
+    
+    let filtered = events
+    
+    // 应用标签筛选
+    if (selectedTag && selectedTag !== "all") {
+      filtered = filtered.filter(event => 
+        event.eventTags.includes(selectedTag)
+      )
+    }
+    
+    // 应用时间筛选
+    if (timeFilter === "latest") {
+      // Latest: 半年之内的所有event，按创建时间排序（最新创建的排在前面）
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      
+      filtered = filtered
+        .filter(event => new Date(event.date) >= sixMonthsAgo)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      
+      console.log(`Latest filter: Showing ${filtered.length} events from last 6 months`)
+    } else if (timeFilter === "past") {
+      // Past: 根据现在的时间和event上的date来判断，如果event date上的时间已经过去了则筛选出来
+      const now = new Date()
+      filtered = filtered
+        .filter(event => new Date(event.date) < now)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // 最近过去的排在前面
+      
+      console.log(`Past filter: Showing ${filtered.length} past events`)
+    } else {
+      console.log(`All time filter: Showing all ${filtered.length} events`)
+    }
+    
+    setFilteredEvents(filtered)
   }
 
   // 分页计算
@@ -258,51 +280,52 @@ export default function EventsPage() {
             
             {/* Filter Section */}
             <div className="flex flex-col md:flex-row justify-center gap-4 mb-8">
-              {/* Category Filter */}
+              {/* Tag Filter - Event Types */}
               <div className="w-full max-w-xs">
-                <Select onValueChange={handleCategoryFilter} value={selectedCategory}>
+                <Select onValueChange={handleTagFilter} value={selectedTag}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder="Select event type" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-                    <SelectItem value="all">All Events</SelectItem>
-                    {Object.entries(tagCategories).map(([key, category]) => (
-                      <SelectItem key={key} value={key}>
-                        <div className="flex items-center gap-2">
-                          <category.icon className="w-4 h-4" />
-                          {category.name}
-                        </div>
+                    <SelectItem value="all">All Event Types</SelectItem>
+                    {/* 显示所有可用的标签 */}
+                    {["文化", "节日", "学术", "娱乐", "体育", "社交", "商业", "技术", "艺术", "教育"].map((tag) => (
+                      <SelectItem key={tag} value={tag}>
+                        {tag}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Tag Filter - 只在选择了类别后显示 */}
-              {selectedCategory && selectedCategory !== "all" && (
-                <div className="w-full max-w-xs">
-                  <Select onValueChange={handleTagFilter} value={selectedTag}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select specific type" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-                      <SelectItem value="all">
-                        All {tagCategories[selectedCategory as keyof typeof tagCategories]?.name}
-                      </SelectItem>
-                      {tagCategories[selectedCategory as keyof typeof tagCategories]?.tags.map((tag) => (
-                        <SelectItem key={tag} value={tag}>
-                          {tag}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
+              {/* Time Filter */}
+              <div className="w-full max-w-xs">
+                <Select onValueChange={handleTimeFilter} value={selectedTimeFilter}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select time filter" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                    <SelectItem value="all">All Time</SelectItem>
+                    <SelectItem value="latest">Latest (6 months)</SelectItem>
+                    <SelectItem value="past">Past Events</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
             {/* Results count */}
             <p className="text-sm text-gray-500 mb-6">
               Showing {currentEvents.length} of {filteredEvents.length} events 
+              {selectedTag !== "all" && (
+                <span className="ml-2">
+                  (Type: {selectedTag})
+                </span>
+              )}
+              {selectedTimeFilter !== "all" && (
+                <span className="ml-2">
+                  {selectedTimeFilter === "latest" ? "(Last 6 months)" : "(Past events)"}
+                </span>
+              )}
               {totalPages > 1 && ` (Page ${currentPage} of ${totalPages})`}
             </p>
           </div>
@@ -341,7 +364,7 @@ export default function EventsPage() {
                       <div className="flex flex-col gap-2 mb-3">
                         {/* Date and Time */}
                         <div className="flex items-center gap-2 text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
-                          <Calendar className="w-4 h-4 text-green-500" />
+                          <Clock className="w-4 h-4 text-green-500" />
                           <span className="text-sm font-medium">Date:</span>
                           <span className="text-sm">{format(new Date(event.date), 'MMM dd, yyyy')}</span>
                         </div>
@@ -403,10 +426,7 @@ export default function EventsPage() {
           {filteredEvents.length === 0 && (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">
-                {selectedCategory === "all" 
-                  ? "No events found." 
-                  : `No events found for ${tagCategories[selectedCategory as keyof typeof tagCategories]?.name || "this category"}.`
-                }
+                No events found.
               </p>
             </div>
           )}
