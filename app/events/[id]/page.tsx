@@ -7,7 +7,7 @@ import { LoadingSpinner } from "@/components/loading"
 import Image from "next/image"
 import placeholder from "@/public/placeholder_small.jpg"
 import { useState, useEffect } from "react"
-import { MapPin, Tag, ArrowLeft, Calendar, Clock, Users, ChevronLeft, ChevronRight, Star } from "lucide-react"
+import { MapPin, Tag, ArrowLeft, Calendar, Clock, Users, ChevronLeft, ChevronRight, Star, Heart, Share2 } from "lucide-react"
 import { getAllEvents } from "@/server/actions/get-all-events"
 import Link from "next/link"
 import { useParams } from "next/navigation"
@@ -26,6 +26,7 @@ interface Event {
   status: string | null
   eventTags: string[]
   image: string
+  contactInfo?: string | null
 }
 
 interface EventData {
@@ -51,6 +52,7 @@ interface EventData {
     imageUrl: string
     eventId: number
   }>
+  contactInfo?: string | null
 }
 
 export default function EventDetailPage() {
@@ -123,6 +125,7 @@ export default function EventDetailPage() {
           status: foundEvent.status,
           eventTags: foundEvent.eventTagsTo.map(tag => tag.eventTagsId.tags),
           image: foundEvent.eImages.length > 0 ? foundEvent.eImages[0].imageUrl : placeholder.src,
+          contactInfo: foundEvent.contactInfo || null,
         }
         
         // 设置图片数组
@@ -197,7 +200,7 @@ export default function EventDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -211,164 +214,166 @@ export default function EventDetailPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 lg:gap-8">
-          {/* Product Image */}
-          <div className="lg:w-1/2 order-1 lg:order-1 lg:sticky lg:top-24 lg:ml-24">
-            <div className="relative aspect-square max-w-lg mx-auto">
-              <Button
+      {/* Top Large Image Carousel - 占据整个顶部区域 */}
+      <div className="w-full max-w-5xl   mx-auto ">
+        <div className="w-full rounded-full  mt-10 max-w-7xl mx-auto relative">
+            <div className="relative w-full h-96 md:h-[500px] lg:h-[600px]">
+            {/* Navigation Buttons */}
+            <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white/80 hover:bg-white"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg"
                 onClick={previousImage}
-              >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-              </Button>
+            >
+                <ChevronLeft className="w-6 h-6 text-blue-600" />
+            </Button>
 
-              <div className="relative w-full h-full overflow-hidden rounded-2xl group">
-                <Image
-                  src={eventImages[currentImageIndex] || placeholder.src}
-                  alt={event.title}
-                  fill
-                  className="object-cover transition-all duration-300 group-hover:scale-110"
-                />
-              </div>
-
-              <Button
+            <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white/80 hover:bg-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg"
                 onClick={nextImage}
-              >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-              </Button>
+            >
+                <ChevronRight className="w-6 h-6 text-blue-600" />
+            </Button>
+
+            {/* Main Image */}
+            <div className="relative w-full h-full overflow-hidden">
+                <Image
+                src={eventImages[currentImageIndex] || placeholder.src}
+                alt={event.title}
+                fill
+                className="object-cover"
+                />
             </div>
 
-            <div className="flex justify-center gap-3 sm:gap-4 mt-6">
-              {eventImages.slice(0, 5).map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`relative w-14 h-14 rounded-lg overflow-hidden transition-all
-                    ${currentImageIndex === index ? "ring-2 ring-black" : "hover:ring-1 hover:ring-gray-200"}
-                  `}
-                >
-                  <Image
-                    src={image}
-                    alt={`${event.title} ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              ))}
+            {/* Progress Indicator */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                {eventImages.map((_, index) => (
+                <div
+                    key={index}
+                    className={`h-1 transition-all duration-300 ${
+                    index === currentImageIndex 
+                        ? 'w-8 bg-white' 
+                        : 'w-4 bg-white/50'
+                    }`}
+                />
+                ))}
             </div>
-          </div>
+            </div>
+        </div>
+      </div>
 
-          {/* Details Section */}
-          <div className="lg:w-1/2 order-2 lg:order-2 space-y-6 lg:ml-4">
-            {/* Title and Rating */}
-            <div className="space-y-4">
-              <h1 className="text-4xl font-bold text-gray-900">{event.title}</h1>
-              
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`w-5 h-5 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">(4.5 / 120 reviews)</span>
+      {/* Main Content - 事件信息和操作区域 */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {/* Left Column - 事件信息垂直布局 */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Date */}
+            <div className="text-gray-600 text-lg">
+              {format(new Date(event.date), 'EEEE, dd MMMM')}
+            </div>
+
+            {/* Title */}
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+              {event.title}
+            </h1>
+
+            {/* Entry Fee */}
+            {event.price === null || event.price === 0 ? (
+              <div className="text-2xl md:text-3xl font-bold text-gray-900">
+                (FREE ENTRY)
               </div>
-            </div>
+            ) : (
+              <div className="text-2xl md:text-3xl font-bold text-gray-900">
+                ${event.price}
+              </div>
+            )}
 
-            {/* Price */}
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gray-900">
-                {event.price !== null && event.price > 0 ? `$ ${event.price}` : 'Free'}
-              </h2>
+            {/* Organizer */}
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-bold">A</span>
+              </div>
+              <span className="text-gray-700 text-lg">
+                By {event.organizer}
+              </span>
             </div>
 
             {/* Description */}
-            <div className="space-y-4">
-              <p className="text-gray-700 leading-relaxed text-lg">
-                {event.description || `Join us for an amazing event: ${event.title}. This is a must-attend event for anyone interested in this field. Don't miss out on this incredible opportunity to learn, network, and have fun!`}
-              </p>
+            <div className="pt-4 space-y-4 text-gray-700 text-lg leading-relaxed">
+              <div dangerouslySetInnerHTML={{ __html: event.description }} />
+            </div>
+
+            {/* Address */}
+            <div className="flex items-center gap-3 pt-4">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <span className="text-gray-700">{event.address}</span>
             </div>
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 pt-4">
               {event.eventTags.map((tag, index) => (
-                <Badge key={index} variant="outline" className="bg-white/80 backdrop-blur-sm border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors duration-300">
+                <Badge key={index} variant="outline" className="bg-gray-100 border-gray-300 text-gray-700">
                   {tag}
                 </Badge>
               ))}
             </div>
+          </div>
 
-            {/* Date and Time */}
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-              <Calendar className="w-5 h-5 text-blue-500" />
-              <div>
-                <h3 className="font-medium text-gray-900">Date & Time</h3>
-                <p className="text-gray-600">
-                  {format(new Date(event.date), 'EEEE, MMMM dd, yyyy')} at {event.time}
-                </p>
-              </div>
-            </div>
+          {/* Right Column - 操作区域 */}
+          <div className="lg:col-span-1">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm sticky top-24">
+              {/* Action Icons */}
+              {/* <div className="flex justify-end gap-3 mb-6">
+                <Button variant="ghost" size="icon" className="w-10 h-10 text-gray-500 hover:text-gray-700">
+                  <Heart className="w-5 h-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="w-10 h-10 text-gray-500 hover:text-gray-700">
+                  <Share2 className="w-5 h-5" />
+                </Button>
+              </div> */}
 
-            {/* Address */}
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-              <MapPin className="w-5 h-5 text-blue-500" />
-              <div>
-                <h3 className="font-medium text-gray-900">Address</h3>
-                <p className="text-gray-600">{event.address}</p>
-              </div>
-            </div>
-
-            {/* Organizer */}
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-              <Users className="w-5 h-5 text-green-500" />
-              <div>
-                <h3 className="font-medium text-gray-900">Organizer</h3>
-                <p className="text-gray-600">{event.organizer}</p>
-              </div>
-            </div>
-
-            {/* Max Participants */}
-            {event.maxParticipants && (
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                <Users className="w-5 h-5 text-purple-500" />
-                <div>
-                  <h3 className="font-medium text-gray-900">Max Participants</h3>
-                  <p className="text-gray-600">{event.maxParticipants}</p>
+              {/* Price */}
+              <div className="mb-4">
+                <div className="text-2xl font-semibold text-gray-900">
+                  {event.price === null || event.price === 0 ? 'Free' : `$${event.price}`}
                 </div>
               </div>
-            )}
 
-            {/* Status */}
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-              <Tag className="w-5 h-5 text-orange-500" />
-              <div>
-                <h3 className="font-medium text-gray-900">Status</h3>
-                <Badge 
-                  variant={event.status === 'active' ? 'default' : 'secondary'}
-                  className="text-sm"
-                >
-                  {event.status === 'active' ? 'Active' : 'Expired'}
-                </Badge>
+              {/* Date & Time */}
+              <div className="mb-6">
+                <div className="text-gray-700">
+                  {format(new Date(event.date), 'MMM dd')} · {event.time} AEST
+                </div>
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 pt-4">
-              <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                Register Now
-              </button>
-              <button className="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors font-medium">
-                Contact Organizer
-              </button>
+              {/* Call to Action Button */}
+              {event.contactInfo && /^https?:\/\//.test(event.contactInfo) ? (
+                <a
+                  href={event.contactInfo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full"
+                >
+                  <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 text-lg font-medium rounded-lg">
+                    Reserve a spot
+                  </Button>
+                </a>
+              ) : (
+                <Button 
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 text-lg font-medium rounded-lg"
+                >
+                  Reserve a spot
+                </Button>
+              )}
+
+              {/* Additional Info */}
+              {/* {event.maxParticipants && (
+                <div className="mt-4 text-center text-sm text-gray-500">
+                  Max {event.maxParticipants} participants
+                </div>
+              )} */}
             </div>
           </div>
         </div>
@@ -376,7 +381,7 @@ export default function EventDetailPage() {
 
       {/* You May Also Like Section */}
       {relatedEvents.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 py-12 lg:ml-24 mt-9">
+        <div className="max-w-6xl mx-auto px-4 py-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">You May Also Like</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedEvents.map((relatedEvent) => (
