@@ -389,16 +389,7 @@ export default function EventsPage() {
                           <span className="text-sm">{event.organizer}</span>
                         </div>
 
-                        {/* Price */}
-                        {event.price !== null && event.price > 0 && (
-                          <div className="flex items-center gap-2">
-                            <Tag className="w-4 h-4 text-orange-500" />
-                            <span className="text-sm font-medium text-gray-600 group-hover:text-gray-700 transition-colors duration-300">Price:</span>
-                            <Badge variant="destructive" className="text-xs bg-gradient-to-r from-orange-500 to-red-500 border-0 text-white shadow-md">
-                              ${event.price}
-                            </Badge>
-                          </div>
-                        )}
+                        
                       </div>
                       
                       <div className="flex flex-wrap gap-1 mb-4">

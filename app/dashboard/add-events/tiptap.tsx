@@ -8,6 +8,8 @@ import Typography from '@tiptap/extension-typography'
 import { Bold, Italic, List, ListOrdered, Strikethrough } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import { useEffect } from 'react'
+import Link from '@tiptap/extension-link'
+
 
 const Tiptap = ({val}: {val: string}) => {
   const { setValue } = useFormContext() //
@@ -26,6 +28,11 @@ const Tiptap = ({val}: {val: string}) => {
             class:"list-disc pl-4",
           }
         }
+      }),
+      Link.configure({
+        openOnClick: false, // 你可以根据需要设置
+        autolink: true,
+        linkOnPaste: true,
       }),
       CharacterCount.configure({
         limit,
